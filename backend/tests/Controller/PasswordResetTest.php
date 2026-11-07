@@ -9,7 +9,7 @@ use Izbik\Model\Entity\Enum\LocaleEnum;
 use Izbik\Model\Repository\UserRepository;
 use Izbik\Route\Routes;
 use Izbik\Service\Authentication\PasswordResetService;
-use Izbik\Service\Mail\MailOutbox;
+use Izbik\Service\Mail\AccountMailHandler;
 use Izbik\Tests\Support\AppHarness;
 use Izbik\Tests\Support\Fixture;
 use Izbik\Tests\Support\IntegrationTestCase;
@@ -18,7 +18,7 @@ use Symfony\Component\Mime\Email;
 
 #[CoversClass(AuthenticationController::class)]
 #[CoversClass(PasswordResetService::class)]
-#[CoversClass(MailOutbox::class)]
+#[CoversClass(AccountMailHandler::class)]
 final class PasswordResetTest extends IntegrationTestCase
 {
 	public function testOptionsTellWhatTheSignInPageOffers(): void

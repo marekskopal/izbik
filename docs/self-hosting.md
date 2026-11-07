@@ -13,9 +13,10 @@ Izbik is in beta. Back up before every upgrade, and read the [changelog](../CHAN
 | --- | --- |
 | `proxy` | nginx on `PROXY_PORT` (and `PROXY_PORT_SSL` with HTTPS): the only service reachable from outside |
 | `frontend` | the Angular app, served by nginx |
-| `backend` | the API, the MCP server and the live updates (FrankenPHP); applies the database migrations on start |
+| `backend` | the API, the MCP server and the live updates (FrankenPHP), and the background job consumer (supervisord runs both); applies the database migrations on start |
 | `db` | MariaDB, its data in the `izbik_data` volume |
 | `minio` | S3-compatible storage for uploaded files and models, in the `izbik_files` volume (unused with external S3) |
+| `rabbitmq` | the queue of the background jobs (account mail, retried when the mail server fails), in the `izbik_queue` volume |
 
 A small server is enough: 2 CPU cores, 2 GB of memory and disk for the uploads. The 3D view runs in the browser.
 
@@ -80,6 +81,16 @@ Serve Izbik over HTTPS on a domain. Choose one of two setups:
   events unbuffered for `/.well-known/mercure` and `/mcp`. Bind `PROXY_PORT` to the loopback or a private network.
 
 Set `PROXY_HOST` in both cases.
+
+### Background jobs without RabbitMQ
+
+The bundled RabbitMQ takes about 150 MB of memory. On a very small machine, set `RABBITMQ_HOST=` (empty) in `.env`:
+the backend then sends each mail right after the request, as earlier versions did, and a mail the mail server refuses
+is lost rather than retried. The `rabbitmq` service may then be removed from `docker-compose.yml` together with the
+backend's `depends_on` entry for it.
+
+A job that keeps failing is tried 5 times, a minute apart, then kept in the `izbik.account-mail.failed` queue. The
+backend's log says why (`docker compose logs backend`).
 
 ### External S3
 

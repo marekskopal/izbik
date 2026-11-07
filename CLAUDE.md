@@ -22,6 +22,7 @@ Users own projects, and admins see all of them. The architecture mirrors `../uko
   `ngCspNonce="random_nonce_value"`, replaced by `sub_filter` with `$request_id`, the header's nonce). **A script,
   style, font, frame or connection from another origin needs adding to that CSP.**
 - `minio/` (a compose service only): S3-compatible storage for uploaded files.
+- `rabbitmq` (a compose service only): the broker of the background jobs (`izbik_queue` volume).
 - `backend/`: FrankenPHP worker, PHP 8.5, `marekskopal/orm`, `marekskopal/router`, MariaDB. Namespace `Izbik\`.
   - Routes are in `Izbik\Route\Routes`. The entrypoint runs `migration:run` before serving.
   - Every route needs a Bearer access token, except `AuthorizationMiddleware::OpenRoutes` and the guest share read (`ShareRoutePattern`).
@@ -52,9 +53,20 @@ Users own projects, and admins see all of them. The architecture mirrors `../uko
     tokeninfo; `users.google_id`, such an account may have no password; a Google sign-in links the account with the
     verified email, dropping the password and the tokens of an unverified one, which may have been signed up by
     someone else). `GET /api/authentication/options` tells the pages what is on: `GOOGLE_CLIENT_ID` and `SMTP_HOST`
-    (`mail`). Mail is queued in `MailOutbox` and sent after the response, like the live updates, laid out by
-    `AccountEmail`; tests record it in `RecordingMailer` and fake Google with `FakeGoogleAuthService`; `Fixture` users
-    are verified.
+    (`mail`). Mail is a background job (`AccountMailJob`: the user, the address, the link and its expiry; sent by
+    `AccountMailHandler` in the account's language at the time, laid out by `AccountEmail`, and dropped when the
+    account, its address or the link has changed); tests record it in `RecordingMailer` and fake Google with
+    `FakeGoogleAuthService`; `Fixture` users are verified.
+  - Background jobs (`Service/Queue`): a service pushes a `JsonSerializable` job onto `JobQueue` with its `QueueEnum`;
+    the worker hands the jobs to the transport after the response, and only after a response under 400
+    (`flushAfter()`), so a failed request starts none. `AmqpJobTransport` publishes them to RabbitMQ (`QueueConfig`,
+    `RABBITMQ_*`); `bin/console queue:consume` (`QueueConsumer`, run by supervisord next to FrankenPHP,
+    `docker/supervisord.conf`) runs each by its `JobHandlerInterface` (`JobHandlers` maps the queues). A failed job is
+    rejected into the queue's `.retry` queue, which sends it back after a minute (`AmqpTopology`), up to
+    `RetryPolicy::MaxAttempts` tries (counted from `x-death`), then lies in `.failed`; a `PermanentJobFailure` goes there
+    at once. Without `RABBITMQ_HOST`, `InlineJobTransport` runs the handlers in the worker after the response, without
+    retries, and the consumer exits; the tests use it (`AppHarness`). **A new job needs its `QueueEnum` case and a
+    handler in `JobHandlers`**; a handler skips a job that has become pointless instead of throwing.
 - `frontend/`: Angular 22 (standalone, signals, zoneless), component prefix `fd`, SCSS tokens in
   `src/styles/_variables.scss`.
   - three.js code lives in `src/app/viewer/engine/` and must stay framework-free (no Angular imports).

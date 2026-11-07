@@ -85,8 +85,16 @@ services:
             MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
             MERCURE_PUBLISH_URL: ${MERCURE_PUBLISH_URL:-http://localhost/.well-known/mercure}
             MERCURE_RESOURCE_IDENTIFIER: ${MERCURE_RESOURCE_IDENTIFIER:-}
+            # Background jobs (account mail). Set RABBITMQ_HOST empty to run them in the web worker without a broker.
+            RABBITMQ_HOST: ${RABBITMQ_HOST-rabbitmq}
+            RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+            RABBITMQ_USER: ${RABBITMQ_USER:-izbik}
+            RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-izbik}
+            BACKEND_AMQP_CONSUMER_PREFETCH: ${BACKEND_AMQP_CONSUMER_PREFETCH:-10}
         depends_on:
             db:
+                condition: service_healthy
+            rabbitmq:
                 condition: service_healthy
             minio:
                 condition: service_started
@@ -118,6 +126,25 @@ services:
             - backend
         volumes:
             - izbik_data:/var/lib/mysql
+
+    # Message broker for the background jobs (account mail), consumed inside the backend container. Not reachable from
+    # outside the stack.
+    rabbitmq:
+        image: rabbitmq:4.4.0-alpine
+        restart: unless-stopped
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-izbik}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-izbik}
+        healthcheck:
+            test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+            interval: 10s
+            timeout: 10s
+            retries: 10
+            start_period: 20s
+        networks:
+            - backend
+        volumes:
+            - izbik_queue:/var/lib/rabbitmq
 
     # S3-compatible storage for uploaded project files. Point S3_* at real S3 in production instead.
     minio:
@@ -157,3 +184,4 @@ networks:
 volumes:
     izbik_data:
     izbik_files:
+    izbik_queue:

@@ -16,10 +16,12 @@ jobs:
         steps:
             - uses: actions/checkout@v7
 
-            - name: Prepare .env with generated secrets, sign-up open
+            # Mail goes to Mailpit, so the sign-up's verification mail shows that background jobs run through RabbitMQ.
+            - name: Prepare .env with generated secrets, sign-up open, mail to Mailpit
               run: |
                   make env
                   sed -i 's/^SIGN_UP_ENABLED=.*/SIGN_UP_ENABLED=1/' .env
+                  sed -i 's/^SMTP_HOST=.*/SMTP_HOST=mailpit/; s/^SMTP_PORT=.*/SMTP_PORT=1025/; s/^#COMPOSE_PROFILES=mail/COMPOSE_PROFILES=mail/' .env
 
             - name: Build and start the stack
               run: docker compose up -d --build --wait
@@ -51,6 +53,18 @@ jobs:
                   FD_URL: http://localhost:4400
                   FD_SOFTWARE_GL: '1'
               run: node scripts/smoke.mjs
+
+            - name: Check that the background job consumer delivered the verification mail
+              run: |
+                  docker compose exec -T backend supervisorctl status queue-consumer | grep RUNNING
+                  for attempt in $(seq 1 30); do
+                      total=$(curl -fsS http://localhost:4402/api/v1/messages | jq '.total')
+                      if [ "$total" -ge 1 ]; then echo "Mailpit has $total message(s)"; exit 0; fi
+                      sleep 2
+                  done
+                  echo "No mail reached Mailpit" >&2
+                  docker compose logs backend | tail -50
+                  exit 1
 
             - name: Upload the failure's screenshot
               if: failure()

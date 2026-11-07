@@ -25,6 +25,7 @@ final class ErrorCatalogueTest extends TestCase
 		'JsonStrategy not found in container.',
 		'CorsMiddleware not found in container.',
 		'AuthorizationMiddleware not found in container.',
+		'The broker refused a background job.',
 		'ErrorTranslator not found in container.',
 		'Cannot write %s.',
 		'Cannot write %s/%s.',

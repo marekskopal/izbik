@@ -17,6 +17,12 @@ use Izbik\Service\Logger\StderrLogger;
 use Izbik\Service\Mail\MailConfig;
 use Izbik\Service\Project\ProjectProvider;
 use Izbik\Service\Project\Transfer\ProjectImportConfig;
+use Izbik\Service\Queue\AmqpConnector;
+use Izbik\Service\Queue\AmqpJobTransport;
+use Izbik\Service\Queue\InlineJobTransport;
+use Izbik\Service\Queue\JobHandlers;
+use Izbik\Service\Queue\JobTransportInterface;
+use Izbik\Service\Queue\QueueConfig;
 use Izbik\Service\Realtime\MercureAccessToken;
 use Izbik\Service\Realtime\MercureCookieIssuer;
 use Izbik\Service\Realtime\MercurePublisherTokenProvider;
@@ -47,6 +53,9 @@ final class InfrastructureServiceProvider extends AbstractServiceProvider
 			GoogleAuthServiceInterface::class,
 			MailConfig::class,
 			MailerInterface::class,
+			QueueConfig::class,
+			JobHandlers::class,
+			JobTransportInterface::class,
 			S3Config::class,
 			ProjectImportConfig::class,
 			S3Client::class,
@@ -91,6 +100,25 @@ final class InfrastructureServiceProvider extends AbstractServiceProvider
 			assert($config instanceof MailConfig);
 
 			return new Mailer(Transport::fromDsn($config->dsn()));
+		});
+
+		$container->add(QueueConfig::class, static fn (): QueueConfig => QueueConfig::fromEnv());
+
+		$container->add(JobHandlers::class, static fn (): JobHandlers => new JobHandlers($container));
+
+		// RabbitMQ when configured, else the jobs run in the web worker after the response.
+		$container->add(JobTransportInterface::class, static function () use ($container): JobTransportInterface {
+			$config = $container->get(QueueConfig::class);
+			assert($config instanceof QueueConfig);
+			if ($config->isEnabled()) {
+				return new AmqpJobTransport(new AmqpConnector($config));
+			}
+			$handlers = $container->get(JobHandlers::class);
+			assert($handlers instanceof JobHandlers);
+			$logger = $container->get(LoggerInterface::class);
+			assert($logger instanceof LoggerInterface);
+
+			return new InlineJobTransport($handlers, $logger);
 		});
 
 		$container->add(S3Config::class, static fn (): S3Config => S3Config::fromEnv());

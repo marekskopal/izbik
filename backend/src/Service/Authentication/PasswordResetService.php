@@ -8,10 +8,11 @@ use DateTimeImmutable;
 use Izbik\Model\Entity\PasswordResetToken;
 use Izbik\Model\Entity\User;
 use Izbik\Model\Repository\PasswordResetTokenRepository;
-use Izbik\Service\Mail\MailOutbox;
-use Izbik\Service\Mail\PasswordResetEmail;
+use Izbik\Service\Mail\AccountMailJob;
+use Izbik\Service\Mail\AccountMailKindEnum;
 use Izbik\Service\Provider\UserProvider;
-use Izbik\Service\Translator\Translator;
+use Izbik\Service\Queue\JobQueue;
+use Izbik\Service\Queue\QueueEnum;
 use RuntimeException;
 use SensitiveParameter;
 
@@ -26,11 +27,10 @@ final readonly class PasswordResetService
 	private const int LifetimeMinutes = 60;
 
 	public function __construct(
-		private Translator $translator,
 		private PasswordResetTokenRepository $tokenRepository,
 		private UserProvider $userProvider,
 		private LoginAttemptService $loginAttempts,
-		private MailOutbox $mailOutbox,
+		private JobQueue $jobQueue,
 		private RateLimitConfig $rateLimitConfig,
 	) {
 	}
@@ -58,11 +58,14 @@ final readonly class PasswordResetService
 		$resetToken->updatedAt = $now;
 		$this->tokenRepository->persist($resetToken);
 
-		$this->mailOutbox->queue(PasswordResetEmail::create(
-			translator: $this->translator,
-			user: $user,
-			resetUrl: rtrim($appUrl, '/') . '/reset-password?token=' . $token,
-			lifetimeMinutes: self::LifetimeMinutes,
+		$this->jobQueue->push(QueueEnum::AccountMail, new AccountMailJob(
+			kind: AccountMailKindEnum::PasswordReset,
+			userId: $user->id,
+			email: $user->email,
+			url: rtrim($appUrl, '/') . '/reset-password?token=' . $token,
+			tokenHash: $resetToken->tokenHash,
+			expiresAt: $resetToken->expiresAt,
+			params: ['minutes' => self::LifetimeMinutes],
 		));
 	}
 

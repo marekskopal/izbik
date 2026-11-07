@@ -144,7 +144,7 @@ final readonly class AuthenticationController
 		return new JsonResponse($this->tokenService->createAuthentication($user));
 	}
 
-	/** Answers the same whether or not the email has an account; the mail goes out after the response (`MailOutbox`). */
+	/** Answers the same whether or not the email has an account; the mail goes out after the response (`JobQueue`). */
 	#[RoutePost(Routes::AuthenticationRequestPasswordReset->value)]
 	public function actionPostRequestPasswordReset(ServerRequestInterface $request): ResponseInterface
 	{

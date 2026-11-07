@@ -256,13 +256,13 @@ the building sections).
 | --- | --- |
 | Frontend | Angular 22 (standalone components, signals, zoneless), three.js, SCSS, Vitest |
 | Backend | PHP 8.5 on FrankenPHP (worker mode), `marekskopal/orm`, `marekskopal/router`, `mcp/sdk` |
-| Data | MariaDB 11.8, MinIO / S3 for files, Mercure (built into FrankenPHP) for live updates |
+| Data | MariaDB 11.8, MinIO / S3 for files, Mercure (built into FrankenPHP) for live updates, RabbitMQ for background jobs |
 | Infrastructure | Docker Compose, nginx reverse proxy (optional TLS) |
 
 ## Self-hosting
 
 Izbik runs as a Docker Compose stack on one machine: the nginx proxy, the Angular frontend, the PHP backend (API, MCP
-server, live updates), MariaDB and MinIO for uploaded files. The full guide, with HTTPS, external S3 and a backup
+server, live updates, background jobs), MariaDB, MinIO for uploaded files and RabbitMQ for the job queue. The full guide, with HTTPS, external S3 and a backup
 schedule, is [docs/self-hosting.md](docs/self-hosting.md); what changed between releases is in
 [CHANGELOG.md](CHANGELOG.md).
 

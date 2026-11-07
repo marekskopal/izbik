@@ -8,11 +8,12 @@ use DateTimeImmutable;
 use Izbik\Model\Entity\EmailVerificationToken;
 use Izbik\Model\Entity\User;
 use Izbik\Model\Repository\EmailVerificationTokenRepository;
-use Izbik\Service\Mail\EmailVerificationEmail;
+use Izbik\Service\Mail\AccountMailJob;
+use Izbik\Service\Mail\AccountMailKindEnum;
 use Izbik\Service\Mail\MailConfig;
-use Izbik\Service\Mail\MailOutbox;
 use Izbik\Service\Provider\UserProvider;
-use Izbik\Service\Translator\Translator;
+use Izbik\Service\Queue\JobQueue;
+use Izbik\Service\Queue\QueueEnum;
 use RuntimeException;
 use SensitiveParameter;
 
@@ -28,10 +29,9 @@ final readonly class EmailVerificationService
 	private const int MaxPerHour = 5;
 
 	public function __construct(
-		private Translator $translator,
 		private EmailVerificationTokenRepository $tokenRepository,
 		private UserProvider $userProvider,
-		private MailOutbox $mailOutbox,
+		private JobQueue $jobQueue,
 		private MailConfig $mailConfig,
 	) {
 	}
@@ -59,11 +59,14 @@ final readonly class EmailVerificationService
 		$verificationToken->updatedAt = $now;
 		$this->tokenRepository->persist($verificationToken);
 
-		$this->mailOutbox->queue(EmailVerificationEmail::create(
-			translator: $this->translator,
-			user: $user,
-			verifyUrl: rtrim($appUrl, '/') . '/verify-email?token=' . $token,
-			lifetimeHours: self::LifetimeHours,
+		$this->jobQueue->push(QueueEnum::AccountMail, new AccountMailJob(
+			kind: AccountMailKindEnum::EmailVerification,
+			userId: $user->id,
+			email: $user->email,
+			url: rtrim($appUrl, '/') . '/verify-email?token=' . $token,
+			tokenHash: $verificationToken->tokenHash,
+			expiresAt: $verificationToken->expiresAt,
+			params: ['hours' => self::LifetimeHours],
 		));
 
 		return true;
