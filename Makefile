@@ -42,16 +42,22 @@ migrate-volumes:
 	done
 
 ## Create .env from .env.example and fill in random secrets (token and Mercure keys) that are empty. A new .env also
-## gets random database and MinIO passwords instead of the examples' (only then: the database keeps the ones it started with)
+## gets random database, MinIO and RabbitMQ passwords instead of the examples' (only then: the database and the broker keep
+## the ones they started with)
 env:
 	@if [ ! -f .env ]; then \
 		cp .env.example .env; \
-		for key in MYSQL_PASSWORD MYSQL_ROOT_PASSWORD S3_SECRET_KEY; do \
+		for key in MYSQL_PASSWORD MYSQL_ROOT_PASSWORD S3_SECRET_KEY RABBITMQ_PASSWORD; do \
 			grep -v "^$$key=" .env > .env.tmp; \
 			echo "$$key=$$(openssl rand -hex 24)" >> .env.tmp; \
 			mv .env.tmp .env; \
 		done; \
-		echo "Created .env with random database and storage passwords"; \
+		echo "Created .env with random database, storage and queue passwords"; \
+	fi
+	@# An .env from before the queue: the broker starts with the next `make up` / `make deploy`, so it may get a random password.
+	@if ! grep -q "^RABBITMQ_PASSWORD=" .env; then \
+		echo "RABBITMQ_PASSWORD=$$(openssl rand -hex 24)" >> .env; \
+		echo "Generated RABBITMQ_PASSWORD in .env"; \
 	fi
 	@for key in AUTHORIZATION_TOKEN_KEY MERCURE_PUBLISHER_JWT_KEY MERCURE_SUBSCRIBER_JWT_KEY; do \
 		if ! grep -q "^$$key=.\{32,\}" .env; then \

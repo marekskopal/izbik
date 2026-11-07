@@ -6,6 +6,19 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+### Changed
+
+- Account mail (password reset, email verification) goes through a background job queue on RabbitMQ, a new service of
+  the stack: a mail the mail server refuses is tried again 5 times, a minute apart, and a slow mail server no longer
+  holds a web worker. A request that fails sends no mail. Without RabbitMQ (`RABBITMQ_HOST` empty) mail is sent after
+  the request as before.
+
+### Upgrading
+
+- The stack has a new `rabbitmq` service and volume, started by `make deploy` (or `make up`), which first adds a random
+  `RABBITMQ_PASSWORD` to `.env`. Upgrade through make rather than a bare `docker compose up`: the broker keeps the
+  password it first started with.
+
 ## [0.4.0] - 2026-11-07
 
 ### Added

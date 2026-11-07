@@ -12,8 +12,10 @@ use Izbik\Service\Authentication\GoogleAuthServiceInterface;
 use Izbik\Service\Authentication\SignUpConfig;
 use Izbik\Service\Example\ExampleCatalogue;
 use Izbik\Service\Mail\MailConfig;
-use Izbik\Service\Mail\MailOutbox;
 use Izbik\Service\Project\SharedAssetIds;
+use Izbik\Service\Queue\InlineJobTransport;
+use Izbik\Service\Queue\JobQueue;
+use Izbik\Service\Queue\JobTransportInterface;
 use Izbik\Service\Realtime\ProjectUpdatePublisher;
 use Izbik\Service\Storage\FileStorageInterface;
 use League\Container\Container;
@@ -63,6 +65,10 @@ final class AppHarness
 			$container->extend(HubInterface::class)->setConcrete(self::mercureHub());
 			$container->extend(MailerInterface::class)->setConcrete(self::mailer());
 			$container->extend(MailConfig::class)->setConcrete(new MailConfig('smtp.test', '25', '', '', 'no-reply@izbik.test'));
+			// Jobs run right after the request, as without a broker, so the tests see their mail.
+			$transport = $container->get(InlineJobTransport::class);
+			assert($transport instanceof InlineJobTransport);
+			$container->extend(JobTransportInterface::class)->setConcrete($transport);
 			$container->extend(GoogleAuthServiceInterface::class)->setConcrete(self::googleAuth());
 			// The examples the tests write, not those shipped in examples/.
 			$container->add(ExampleCatalogue::class, new ExampleCatalogue(new NullLogger(), self::examplesDirectory()));
@@ -82,7 +88,7 @@ final class AppHarness
 		$response = self::app()->handler->handle($request);
 		self::app()->dbContext->resetOrmState();
 		self::updatePublisher()->flush();
-		self::mailOutbox()->flush();
+		self::jobQueue()->flushAfter($response);
 		self::app()->dbContext->resetOrmState();
 
 		return $response;
@@ -159,6 +165,7 @@ final class AppHarness
 		$assetIds->clear();
 		self::mercureHub()->updates = [];
 		self::mailer()->sent = [];
+		self::mailer()->failNext = false;
 		self::googleAuth()->identities = [];
 
 		self::resetRequestContexts();
@@ -174,15 +181,15 @@ final class AppHarness
 		assert($mcpUserContext instanceof McpUserContext);
 		$mcpUserContext->clear();
 		self::updatePublisher()->reset();
-		self::mailOutbox()->reset();
+		self::jobQueue()->reset();
 	}
 
-	private static function mailOutbox(): MailOutbox
+	public static function jobQueue(): JobQueue
 	{
-		$outbox = self::container()->get(MailOutbox::class);
-		assert($outbox instanceof MailOutbox);
+		$queue = self::container()->get(JobQueue::class);
+		assert($queue instanceof JobQueue);
 
-		return $outbox;
+		return $queue;
 	}
 
 	private static function updatePublisher(): ProjectUpdatePublisher

@@ -84,6 +84,7 @@ final class OrmServiceProvider extends AbstractServiceProvider
 	public function provides(string $id): bool
 	{
 		return in_array($id, [
+			DbContext::class,
 			DatabaseInterface::class,
 			ORM::class,
 			ProjectRepository::class,
@@ -126,6 +127,7 @@ final class OrmServiceProvider extends AbstractServiceProvider
 		$container = $this->getContainer();
 		assert($container instanceof Container);
 
+		$container->add(DbContext::class, $this->dbContext);
 		$container->add(DatabaseInterface::class, fn () => $this->dbContext->getDatabase());
 		$container->add(ORM::class, $this->dbContext->getOrm());
 

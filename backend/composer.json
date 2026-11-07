@@ -19,6 +19,7 @@
         "marekskopal/router": "^1.1",
         "mcp/sdk": "^0.9.0",
         "nyholm/psr7": "^1.8",
+        "php-amqplib/php-amqplib": "^3.7",
         "php-http/discovery": "^1.19",
         "psr/container": "^2.0",
         "psr/http-factory": "^1.1",

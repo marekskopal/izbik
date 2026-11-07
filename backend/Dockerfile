@@ -7,11 +7,13 @@ COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/b
 RUN install-php-extensions \
     gd \
     pdo_mysql \
+    sockets \
     zip \
     opcache
 
 # poppler-utils: pdfinfo and pdftoppm turn PDF pages into images (PdfRasterizer); DejaVu for PDFs without embedded fonts.
-RUN apk add --no-cache curl tzdata poppler-utils font-dejavu
+# supervisor runs FrankenPHP and the background job consumer side by side (docker/supervisord.conf).
+RUN apk add --no-cache curl tzdata poppler-utils font-dejavu supervisor
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
@@ -21,9 +23,11 @@ COPY ./migrations /app/migrations
 COPY ./src /app/src
 COPY ./translations /app/translations
 COPY ./Caddyfile /etc/frankenphp/Caddyfile
+COPY ./docker/supervisord.conf /etc/supervisord.conf
+COPY ./docker/supervisor-fatal.sh /usr/local/bin/supervisor-fatal.sh
 COPY ./docker/php-uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 COPY ./docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/supervisor-fatal.sh
 COPY ./composer.json ./composer.lock* /app/
 
 WORKDIR /app/
@@ -37,4 +41,4 @@ RUN php bin/console orm:schema-dump
 
 # The entrypoint applies pending migrations (the seed data lives in them), then execs the CMD.
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
