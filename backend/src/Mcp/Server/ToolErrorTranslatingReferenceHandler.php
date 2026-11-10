@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Izbik\Mcp\Server;
 
 use MarekSkopal\ORM\Exception\ORMException;
-use Mcp\Capability\Registry\ElementReference;
-use Mcp\Capability\Registry\ReferenceHandlerInterface;
-use Mcp\Exception\ExceptionInterface;
-use Mcp\Exception\ToolCallException;
+use Mcp\Schema\Exception\ExceptionInterface;
+use Mcp\Server\Capability\Registry\ElementReference;
+use Mcp\Server\Capability\Registry\ReferenceHandlerInterface;
+use Mcp\Server\Exception\ToolCallException;
 use PDOException;
 use RuntimeException;
 use Throwable;

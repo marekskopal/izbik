@@ -10,9 +10,9 @@ use Izbik\Service\Editor\ContourLines;
 use Izbik\Service\Editor\Element\PlotHandler;
 use Izbik\Service\Editor\SceneEditor;
 use Izbik\Service\Editor\SpotHeights;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /** Plots: the boundary of the land around the building and its ground, flat or sloping (spot heights). */
 final readonly class PlotTools

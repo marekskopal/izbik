@@ -10,8 +10,8 @@ use Izbik\Service\Editor\Catalog\ItemKindCatalog;
 use Izbik\Service\Provider\SceneProvider;
 use Izbik\Service\Schedule\ElectricalScheduleService;
 use Izbik\Service\Schedule\RoomScheduleService;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 final readonly class FloorTools
 {

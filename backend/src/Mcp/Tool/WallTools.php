@@ -10,9 +10,9 @@ use Izbik\Service\Editor\Drawing\WallDrawer;
 use Izbik\Service\Editor\Element\WallFinishBands;
 use Izbik\Service\Editor\SceneEditor;
 use Izbik\Service\Request\BodyReader;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /** Walls, given by their centre line. */
 final readonly class WallTools

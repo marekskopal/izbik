@@ -8,8 +8,8 @@ use Izbik\Dto\EditResultDto;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Service\Editor\GroupEditor;
 use Izbik\Service\Editor\SceneEditor;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 /**
  * Item groups: items forming one piece of furniture (a kitchen run, a hall stand) that move, copy and

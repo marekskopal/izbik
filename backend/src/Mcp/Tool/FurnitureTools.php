@@ -18,9 +18,9 @@ use Izbik\Service\Furniture\DefinitionException;
 use Izbik\Service\Furniture\DefinitionValidator;
 use Izbik\Service\Furniture\FurnitureDefinitionProvider;
 use Izbik\Service\Json\JsonDecoder;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 use RuntimeException;
 use const DATE_ATOM;
 

@@ -6,7 +6,6 @@ namespace Izbik\Tests\Mcp;
 
 use Izbik\Controller\McpController;
 use Izbik\Dto\EditResultDto;
-use Izbik\Mcp\Server\EmptyObjectSchemaValidator;
 use Izbik\Mcp\Server\ToolErrorTranslatingReferenceHandler;
 use Izbik\Mcp\Session\DatabaseSessionStore;
 use Izbik\Mcp\Tool\CommentTools;
@@ -54,7 +53,6 @@ use const PHP_URL_PATH;
 #[CoversClass(EditResultDto::class)]
 #[CoversClass(DatabaseSessionStore::class)]
 #[CoversClass(ToolErrorTranslatingReferenceHandler::class)]
-#[CoversClass(EmptyObjectSchemaValidator::class)]
 #[CoversClass(ProjectTools::class)]
 #[CoversClass(ShareLinkTools::class)]
 #[CoversClass(CommentTools::class)]
@@ -578,7 +576,7 @@ final class McpServerTest extends IntegrationTestCase
 			'side' => 'Left',
 			'offset' => 0,
 			'units' => [$unit(600), ['definitionId' => $tallId, 'width' => 600, 'height' => 2100], $unit(600), ['definitionId' => $base, 'width' => 600, 'z' => 1450]],
-			'worktop' => [],
+			'worktop' => new stdClass(),
 		]);
 		self::assertIsArray($run);
 		self::assertIsList($run['batch']);
@@ -1010,7 +1008,7 @@ final class McpServerTest extends IntegrationTestCase
 			'floorId' => $floorId,
 			'itemId' => $added['element']['id'],
 			'kind' => 'Box',
-			'params' => [],
+			'params' => new stdClass(),
 			'clear' => ['definitionId'],
 		]);
 		self::assertIsArray($box);
@@ -1197,7 +1195,7 @@ final class McpServerTest extends IntegrationTestCase
 		$floorId = Fixture::firstFloor($this->project)->id;
 		$isError = false;
 
-		// `new stdClass()` is sent as `{}`, which the SDK decodes into `[]`.
+		// `new stdClass()` is sent as `{}`, which the `array` parameter receives as `[]`.
 		$box = $this->client->call(
 			'add_item',
 			['projectId' => $this->project->id, 'floorId' => $floorId, 'kind' => 'Box', 'x' => 0, 'y' => 0, 'params' => new stdClass()],

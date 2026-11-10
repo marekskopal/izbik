@@ -7,9 +7,9 @@ namespace Izbik\Mcp\Tool;
 use Izbik\Dto\EditResultDto;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Service\Editor\SceneEditor;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /** Items: cabinets, appliances, sanitary ware, fences, … (see list_item_kinds). */
 final readonly class ItemTools

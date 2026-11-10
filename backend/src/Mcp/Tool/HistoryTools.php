@@ -6,7 +6,7 @@ namespace Izbik\Mcp\Tool;
 
 use Izbik\Dto\EditResultDto;
 use Izbik\Service\Editor\UndoService;
-use Mcp\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 /** Undo/redo of this MCP client's own changes. */
 final readonly class HistoryTools

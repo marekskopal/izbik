@@ -11,10 +11,10 @@ use Izbik\Service\Project\Pdf\PdfPage;
 use Izbik\Service\Project\Pdf\PdfPageImageService;
 use Izbik\Service\Project\ProjectFileProvider;
 use Izbik\Service\Upload\UploadTicketService;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\Content\ImageContent;
 use Mcp\Schema\Content\TextContent;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 use RuntimeException;
 
 /** Files uploaded to a project (plans, photos, renders), so an agent can work from them, and their upload. */

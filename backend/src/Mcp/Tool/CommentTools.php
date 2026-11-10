@@ -12,9 +12,9 @@ use Izbik\Model\Entity\Project;
 use Izbik\Service\Actor\ActorContext;
 use Izbik\Service\Comment\CommentActor;
 use Izbik\Service\Comment\CommentProvider;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 use RuntimeException;
 
 /**

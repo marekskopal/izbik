@@ -10,9 +10,9 @@ use Izbik\Dto\SavedViewSettingsDto;
 use Izbik\Dto\SunTimeDto;
 use Izbik\Model\Entity\SavedView;
 use Izbik\Service\Project\SavedViewProvider;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 use RuntimeException;
 
 /**

@@ -7,8 +7,8 @@ namespace Izbik\Mcp\Tool;
 use Izbik\Dto\EditResultDto;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Service\Editor\SceneEditor;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 /** Stairs from a floor up to the next one; they cut their void through the floor above. */
 final readonly class StairTools

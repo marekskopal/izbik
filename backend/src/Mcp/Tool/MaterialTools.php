@@ -9,9 +9,9 @@ use Izbik\Model\Entity\Material;
 use Izbik\Model\Repository\MaterialRepository;
 use Izbik\Service\Material\MaterialException;
 use Izbik\Service\Material\MaterialService;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /** The global material catalogue: everyone reads it, admins add and change materials. */
 final readonly class MaterialTools

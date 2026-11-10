@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Izbik\Mcp\Session;
 
 use MarekSkopal\ORM\Database\DatabaseInterface;
-use Mcp\Exception\SessionLockException;
-use Mcp\Exception\SessionLockTimeoutException;
+use Mcp\Server\Exception\SessionLockException;
+use Mcp\Server\Exception\SessionLockTimeoutException;
 use Mcp\Server\Session\SessionLockInterface;
 use PDOException;
 use Symfony\Component\Uid\Uuid;

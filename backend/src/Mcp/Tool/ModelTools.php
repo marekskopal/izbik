@@ -8,8 +8,8 @@ use Izbik\Dto\ModelAssetInputDto;
 use Izbik\Model\Entity\ModelAsset;
 use Izbik\Service\ModelAsset\ModelAssetProvider;
 use Izbik\Service\Upload\UploadTicketService;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 use RuntimeException;
 
 /** The 3D models of bought products that Model items draw: list, upload and delete them. */

@@ -9,7 +9,7 @@ use Izbik\Dto\DxfImportResultDto;
 use Izbik\Dto\DxfSummaryDto;
 use Izbik\Service\Dxf\DxfImporter;
 use Izbik\Service\Dxf\DxfPlan;
-use Mcp\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\McpTool;
 use function array_filter;
 
 /** Walls and openings from a CAD floor plan (an ASCII DXF uploaded as a project file). */

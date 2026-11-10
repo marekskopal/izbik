@@ -11,9 +11,9 @@ use Izbik\Dto\ShareSettingsDto;
 use Izbik\Dto\SunTimeDto;
 use Izbik\Model\Entity\ShareLink;
 use Izbik\Service\Project\ShareLinkProvider;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 use RuntimeException;
 use const JSON_THROW_ON_ERROR;
 

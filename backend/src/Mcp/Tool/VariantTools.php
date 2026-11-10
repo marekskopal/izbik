@@ -8,8 +8,8 @@ use Izbik\Dto\EditResultDto;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Service\Editor\SceneEditor;
 use Izbik\Service\Editor\VariantEditor;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 /**
  * Variant sets: alternatives of one piece of furniture (e.g. the kitchen with or without its island). Each

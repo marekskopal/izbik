@@ -10,9 +10,9 @@ use Izbik\Dto\QuantitiesDto;
 use Izbik\Model\Entity\Enum\QuantitySurfaceEnum;
 use Izbik\Service\Quantities\MaterialPriceService;
 use Izbik\Service\Quantities\QuantitiesService;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /**
  * Quantities and cost estimate: flooring, wall finishes, paint, ceilings and skirting per room and material, furniture

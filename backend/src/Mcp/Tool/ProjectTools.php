@@ -24,8 +24,8 @@ use Izbik\Service\Project\FloorProvider;
 use Izbik\Service\Project\ProjectProvider;
 use Izbik\Service\Project\ProjectVersionProvider;
 use Izbik\Service\Upload\UploadTicketService;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 final readonly class ProjectTools
 {

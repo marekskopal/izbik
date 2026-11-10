@@ -9,7 +9,7 @@ use Izbik\Dto\UnderlayInputDto;
 use Izbik\Service\Project\Pdf\PdfPageImageService;
 use Izbik\Service\Project\ProjectFileProvider;
 use Izbik\Service\Project\UnderlayService;
-use Mcp\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\McpTool;
 use RuntimeException;
 use Throwable;
 

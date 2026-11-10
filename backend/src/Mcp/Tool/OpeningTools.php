@@ -7,8 +7,8 @@ namespace Izbik\Mcp\Tool;
 use Izbik\Dto\EditResultDto;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Service\Editor\SceneEditor;
-use Mcp\Capability\Attribute\McpTool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Capability\Attribute\McpTool;
 
 /** Doors, passages and windows in walls. */
 final readonly class OpeningTools

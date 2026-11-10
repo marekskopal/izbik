@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Izbik\Mcp\Server;
 
-use Mcp\Capability\Registry\ReferenceHandler;
-use Mcp\Server;
+use Mcp\Server\Capability\Registry\ReferenceHandler;
+use Mcp\Server\Server;
 use Mcp\Server\Session\SessionLockInterface;
 use Mcp\Server\Session\SessionStoreInterface;
 use Psr\Container\ContainerInterface;
@@ -13,8 +13,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Builds the MCP server: tools discovered from `Mcp/Tool` (`#[McpTool]` methods), instances from the container.
- * Tool arguments are validated with `EmptyObjectSchemaValidator`; the session lock serializes the requests of one
- * session.
+ * The session lock serializes the requests of one session.
  */
 final readonly class IzbikServer
 {
@@ -120,7 +119,6 @@ final readonly class IzbikServer
 			->setContainer($this->container)
 			->setLogger($this->logger)
 			->setReferenceHandler(new ToolErrorTranslatingReferenceHandler(new ReferenceHandler($this->container)))
-			->setSchemaValidator(new EmptyObjectSchemaValidator(logger: $this->logger))
 			->setDiscovery(basePath: dirname(__DIR__, 2), scanDirs: ['Mcp/Tool'])
 			// All tools on one page of tools/list: not every client follows `nextCursor` (the default page is 50).
 			->setPaginationLimit(self::PaginationLimit)

@@ -17,7 +17,7 @@
         "marekskopal/orm": "^2.0",
         "marekskopal/orm-migrations": "^2.0",
         "marekskopal/router": "^1.1",
-        "mcp/sdk": "^0.9.0",
+        "mcp/sdk": "^0.10.0",
         "nyholm/psr7": "^1.8",
         "php-amqplib/php-amqplib": "^3.7",
         "php-http/discovery": "^1.19",

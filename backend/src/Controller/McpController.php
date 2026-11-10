@@ -88,6 +88,11 @@ final readonly class McpController
 			new DatabaseSessionLock($this->database, $this->sessionLockTimeout()),
 		);
 
+		// The SDK binds a session to the principal that opened it: another user or client gets 404 on it.
+		$request = $request->withAttribute(
+			StreamableHttpTransport::PRINCIPAL_ATTRIBUTE,
+			sprintf('user:%d:client:%s', $authorization->user->id, $authorization->clientId),
+		);
 		$transport = new StreamableHttpTransport($request, middleware: [
 			new CorsMiddleware(),
 			new DnsRebindingProtectionMiddleware(allowedHosts: $this->allowedHosts()),

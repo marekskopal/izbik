@@ -6,8 +6,8 @@ namespace Izbik\Mcp\Tool;
 
 use Izbik\Dto\EditResultDto;
 use Izbik\Service\Editor\Drawing\CabinetRun;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
+use Mcp\Server\Capability\Attribute\McpTool;
+use Mcp\Server\Capability\Attribute\Schema;
 
 /** A kitchen (or any) run of units laid along a wall in one go, instead of placing each item by hand. */
 final readonly class CabinetRunTools
