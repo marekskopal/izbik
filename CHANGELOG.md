@@ -6,18 +6,24 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-10
+
 ### Changed
 
 - Account mail (password reset, email verification) goes through a background job queue on RabbitMQ, a new service of
   the stack: a mail the mail server refuses is tried again 5 times, a minute apart, and a slow mail server no longer
   holds a web worker. A request that fails sends no mail. Without RabbitMQ (`RABBITMQ_HOST` empty) mail is sent after
   the request as before.
+- MCP: the server runs on version 0.10 of the MCP PHP SDK. Tool arguments keep their JSON types, so an empty object
+  has to be sent as `{}`, not `[]`, and a session belongs to the user and client that opened it.
+- Dependency updates: Angular 22.2.5 and pnpm 12.18 in the frontend image.
 
 ### Upgrading
 
 - The stack has a new `rabbitmq` service and volume, started by `make deploy` (or `make up`), which first adds a random
   `RABBITMQ_PASSWORD` to `.env`. Upgrade through make rather than a bare `docker compose up`: the broker keeps the
   password it first started with.
+- MCP sessions opened before the upgrade are refused once; clients reconnect by themselves.
 
 ## [0.4.0] - 2026-11-07
 
@@ -109,7 +115,8 @@ The first public beta, for running on a server of your own.
 - `make env` gives a new `.env` random database and MinIO passwords.
 - `BACKEND_CORS_ALLOWED_ORIGIN` defaults to empty (no cross-origin calls). Clear `*` in an existing `.env`.
 
-[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/marekskopal/izbik/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/marekskopal/izbik/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/marekskopal/izbik/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/marekskopal/izbik/compare/v0.1.0...v0.2.0
