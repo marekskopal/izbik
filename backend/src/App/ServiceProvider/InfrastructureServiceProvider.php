@@ -13,7 +13,8 @@ use Izbik\Service\Authentication\RateLimitConfig;
 use Izbik\Service\Authentication\SignUpConfig;
 use Izbik\Service\Authentication\TokenService;
 use Izbik\Service\Cors\CorsPolicy;
-use Izbik\Service\Logger\StderrLogger;
+use Izbik\Service\Logger\Logger;
+use Izbik\Service\Logger\SafeLogger;
 use Izbik\Service\Mail\MailConfig;
 use Izbik\Service\Project\ProjectProvider;
 use Izbik\Service\Project\Transfer\ProjectImportConfig;
@@ -72,7 +73,7 @@ final class InfrastructureServiceProvider extends AbstractServiceProvider
 
 		$container->add(
 			LoggerInterface::class,
-			static fn (): LoggerInterface => new StderrLogger((string) getenv('BACKEND_LOG_LEVEL') === 'debug'),
+			static fn (): LoggerInterface => new SafeLogger(Logger::initLogger(self::logDirectory())),
 		);
 
 		$container->add(
@@ -183,5 +184,20 @@ final class InfrastructureServiceProvider extends AbstractServiceProvider
 
 			return new S3FileStorage($client, $config, $logger);
 		});
+	}
+
+	/**
+	 * Tracy's log directory: `log/` next to `src/` (`/app/log`, bind-mounted from the host's `./log`). Tracy exits the
+	 * process when it is missing, so it is created here if need be; writes that fail then surface on stderr through
+	 * SafeLogger.
+	 */
+	private static function logDirectory(): string
+	{
+		$directory = __DIR__ . '/../../../log';
+		if (!is_dir($directory)) {
+			@mkdir($directory, 0775, true);
+		}
+
+		return $directory;
 	}
 }

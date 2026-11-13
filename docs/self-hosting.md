@@ -90,7 +90,8 @@ is lost rather than retried. The `rabbitmq` service may then be removed from `do
 backend's `depends_on` entry for it.
 
 A job that keeps failing is tried 5 times, a minute apart, then kept in the `izbik.account-mail.failed` queue. The
-backend's log says why (`docker compose logs backend`).
+backend's log says why (`docker compose logs backend`, or Tracy's files in `log/`: `error.log` and an HTML page per
+exception).
 
 ### External S3
 

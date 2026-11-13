@@ -39,6 +39,9 @@ RUN rm -rf /app/vendor \
 # Generated ORM hydrators/extractors, loaded by DbContext under opcache instead of an attribute scan.
 RUN php bin/console orm:schema-dump
 
+# Tracy's log directory, bind-mounted from the host's ./log in docker-compose.yml.
+RUN mkdir -p /app/log
+
 # The entrypoint applies pending migrations (the seed data lives in them), then execs the CMD.
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

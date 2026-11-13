@@ -17,23 +17,35 @@ use League\Container\ReflectionContainer;
 use MarekSkopal\Router\Builder\RouterBuilder;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
-final readonly class ApplicationFactory
+final class ApplicationFactory
 {
+	/** In place of Tracy (InfrastructureServiceProvider) for every application this process creates: the tests' logger. */
+	private static ?LoggerInterface $logger = null;
+
+	public static function useLogger(?LoggerInterface $logger): void
+	{
+		self::$logger = $logger;
+	}
+
 	public static function create(): Application
 	{
 		$dbContext = self::initializeDbContext();
-		$container = self::initializeContainer($dbContext);
+		$container = self::initializeContainer($dbContext, self::$logger);
 		$requestHandler = self::initializeRequestHandler($container);
 
 		return new Application($container, $requestHandler, $dbContext);
 	}
 
-	private static function initializeContainer(DbContext $dbContext): ContainerInterface
+	private static function initializeContainer(DbContext $dbContext, ?LoggerInterface $logger): ContainerInterface
 	{
 		$container = new Container();
 		$container->defaultToShared();
 		$container->delegate(new ReflectionContainer(true));
+		if ($logger !== null) {
+			$container->add(LoggerInterface::class, $logger);
+		}
 
 		$container->addServiceProvider(new InfrastructureServiceProvider());
 		$container->addServiceProvider(new OrmServiceProvider($dbContext));

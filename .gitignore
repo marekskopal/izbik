@@ -7,6 +7,7 @@
 /node_modules/
 /.claude/skills/bump-deps/
 /log/
+/backend/log/
 /data/
 /backups/
 /frontend/smoke-results/

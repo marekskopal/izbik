@@ -107,6 +107,9 @@ services:
             start_period: 30s
         networks:
             - backend
+        volumes:
+            # Tracy's error logs and exception pages (the records also go to the container log).
+            - ./log:/app/log
 
     db:
         image: mariadb:11.8

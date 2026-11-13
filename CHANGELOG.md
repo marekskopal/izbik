@@ -6,6 +6,12 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+### Changed
+
+- The backend logs through Tracy: errors and exceptions still go to the container log, and also to `log/` on the host
+  (`error.log`, `warning.log`, … and an HTML page with the stack trace per exception). PHP warnings and notices are
+  turned into exceptions.
+
 ## [0.5.0] - 2026-11-10
 
 ### Changed
