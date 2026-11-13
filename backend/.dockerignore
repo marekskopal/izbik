@@ -1,4 +1,5 @@
 vendor
+log
 var
 .phpstan
 .phpunit.cache

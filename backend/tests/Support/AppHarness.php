@@ -56,6 +56,8 @@ final class AppHarness
 	{
 		if (self::$application === null) {
 			self::recreateDatabase();
+			// Tracy would take over PHPUnit's error handlers and write into log/ (the commands' applications too).
+			ApplicationFactory::useLogger(new NullLogger());
 			self::$application = ApplicationFactory::create();
 			self::$application->dbContext->getMigrator()->migrate();
 

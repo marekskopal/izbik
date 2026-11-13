@@ -26,6 +26,10 @@ Users own projects, and admins see all of them. The architecture mirrors `../uko
 - `backend/`: FrankenPHP worker, PHP 8.5, `marekskopal/orm`, `marekskopal/router`, MariaDB. Namespace `Izbik\`.
   - Routes are in `Izbik\Route\Routes`. The entrypoint runs `migration:run` before serving.
   - Every route needs a Bearer access token, except `AuthorizationMiddleware::OpenRoutes` and the guest share read (`ShareRoutePattern`).
+  - Logging (as in ukolio): `LoggerInterface` is Tracy (`Service/Logger`: `Logger::initLogger()` enables it in
+    production mode with strict mode, so warnings and notices throw; `TracyLogger` writes each record to stderr too,
+    debug ones only with `BACKEND_LOG_LEVEL=debug`) behind `SafeLogger`, which never lets a logging fault reach the
+    caller. Its files (`error.log`, an HTML page per exception) are in `/app/log`, the host's `./log`.
   - Controllers get the user from `RequestService::getUser()`. For missing permissions they answer 403, not 401
     (a 401 makes the frontend refresh the token or sign out).
   - Request DTOs implement `ArrayFactoryInterface` and read fields via `BodyReader`.
