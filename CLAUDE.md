@@ -576,6 +576,11 @@ The current format is the text in `FurnitureTools::Format`.
   a grain), painted brick, more strip and metro tiles, plain compact worktops, smoky grey glass, upholstery colours,
   walnut and black fluted panels; `panel-fluted-oak` takes `wood-oak-light`'s colour. A patchwork of several encaustic
   designs and bevelled tiles still need patterns of their own.
+- Trowelled plaster (I-172, `SeedConcretePlaster`): the pattern `Trowelled` is a concrete-look screed or microcement
+  without joints, one patch `tileWidth` × `tileHeight` (2.4 m square without them): `trowelledShades()` lays a cloudy
+  ground, trowel strokes with ragged edges and sandy patches with pores, wrapped round the patch's edges, mapped from
+  the base colour towards `accent` (dark) or a lighter base. It keeps its surface's UVs, is counted by area and draws
+  as a plain fill in the elevations. Seeded in grey, light grey and anthracite (`plaster-concrete-*`).
 - Tile grid: a room's `tileOriginX/Y` (plan mm; null means the plan origin) is where the tile joints cross.
   `alignTiles()` (`viewer/engine/tiling.ts`) recomputes the UVs of every mesh with a `Tiles` material from its plan
   position. This way the floor, the wall bands (whose rows start at the floor) and the room's tiled items share one
