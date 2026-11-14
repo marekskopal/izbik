@@ -372,7 +372,7 @@ Upgrades go forward from any earlier release; to go back, restore the backup mad
 
 ## Development
 
-To develop the frontend or run lint and tests on the host, you also need PHP 8.5 with Composer, Node.js 24 and pnpm.
+To develop the frontend or run lint and tests on the host, you also need PHP 8.5 with Composer, Node.js 26 and pnpm.
 [CONTRIBUTING.md](CONTRIBUTING.md) describes how to contribute; [SECURITY.md](SECURITY.md) how to report a
 vulnerability. Problems and ideas go to the [issues](https://github.com/marekskopal/izbik/issues) (the app's header
 links there as *Report a problem*).

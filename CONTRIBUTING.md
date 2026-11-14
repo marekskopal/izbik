@@ -15,7 +15,7 @@ furniture definitions and features are all welcome.
 ## Setting up
 
 You need Docker with Compose, `make` and `openssl`, and for lint, tests and the dev server PHP 8.5 with Composer,
-Node.js 24 and pnpm.
+Node.js 26 and pnpm.
 
 ```sh
 git clone https://github.com/marekskopal/izbik.git

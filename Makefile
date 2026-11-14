@@ -136,7 +136,7 @@ import-models:
 ## optimise them and import them as global models (needs the running stack; models already there are skipped)
 example-models:
 	docker run --rm -v "$(CURDIR)":/work -w /work/frontend -u "$$(id -u):$$(id -g)" -e HOME=/tmp \
-		node:24.22.2-alpine node scripts/example-models.mjs /work/data/example-models /work/backend/examples
+		node:26.13.1-alpine node scripts/example-models.mjs /work/data/example-models /work/backend/examples
 	$(MAKE) import-models DIR=data/example-models
 
 ## Capture the README screenshots of a project's saved views and pages into docs/screenshots (needs the running stack):
