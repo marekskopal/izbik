@@ -43,7 +43,7 @@ class Material extends AEntity
 		public ?int $tileHeight,
 		#[ManyToOne(entityClass: User::class, nullable: true)]
 		public ?User $createdBy = null,
-		/** Second colour of a pattern (#rrggbb): the veins of `Marble`, the motif of `Encaustic`; null derives one. */
+		/** Second colour of a pattern (#rrggbb): the veins of `Marble`, the motif of `Encaustic`, the dark patches of `Trowelled`; null derives one. */
 		#[Column(type: Type::String, size: 7, nullable: true)]
 		public ?string $accent = null,
 	) {

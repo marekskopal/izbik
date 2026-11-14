@@ -2,7 +2,75 @@ import {Material} from '@app/models/scene';
 import * as THREE from 'three';
 import {describe, expect, it} from 'vitest';
 
-import {herringboneLength, herringboneTiles, MaterialLibrary} from './materials';
+import {herringboneLength, herringboneTiles, MaterialLibrary, trowelledAccent, trowelledShades} from './materials';
+
+describe('trowelled plaster', () => {
+    const random = (seed: number): (() => number) => {
+        let state = seed;
+        return (): number => {
+            state = (state * 1103515245 + 12345) % 2147483648;
+            return state / 2147483648;
+        };
+    };
+    const [width, height] = [300, 200];
+    const shades = trowelledShades(width, height, 4, random(7));
+    const at = (x: number, y: number): number => shades[y * width + x];
+
+    it('varies round its base colour, mostly within half the way to its accent or the lighter shade', () => {
+        const values = Array.from(shades);
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        expect(Math.abs(mean)).toBeLessThan(0.2);
+        expect(values.filter((value) => Math.abs(value) < 0.5).length / values.length).toBeGreaterThan(0.9);
+        expect(Math.max(...values) - Math.min(...values)).toBeGreaterThan(0.4);
+    });
+
+    it('wraps round its edges, so the patch tiles without a seam', () => {
+        // The last column and the first (the last row and the first) differ about as much as neighbouring ones inside
+        // do; two unrelated columns differ 1.6–2.7 times as much, so a seam would show here.
+        const step = (pairs: [number, number][]): number => pairs.reduce((sum, [a, b]) => sum + Math.abs(a - b), 0) / pairs.length;
+        const median = (values: number[]): number => [...values].sort((a, b) => a - b)[values.length >> 1];
+        const rows = Array.from({length: height}, (_, y) => y);
+        const columns = Array.from({length: width}, (_, x) => x);
+        const columnStep = median(columns.slice(1).map((x) => step(rows.map((y) => [at(x - 1, y), at(x, y)]))));
+        const rowStep = median(rows.slice(1).map((y) => step(columns.map((x) => [at(x, y - 1), at(x, y)]))));
+        expect(step(rows.map((y) => [at(width / 3, y), at(0, y)]))).toBeGreaterThan(1.4 * columnStep);
+        expect(step(rows.map((y) => [at(width - 1, y), at(0, y)]))).toBeLessThan(1.4 * columnStep);
+        expect(step(columns.map((x) => [at(x, height - 1), at(x, 0)]))).toBeLessThan(1.4 * rowStep);
+    });
+
+    it('is the same on every load', () => {
+        expect(trowelledShades(width, height, 4, random(7))).toEqual(shades);
+    });
+
+    it('keeps a coarse patch of a large plaster from filling with pores, and a small one from wrapping its strokes', () => {
+        const mean = (values: Float32Array): number => values.reduce((sum, value) => sum + value, 0) / values.length;
+        expect(Math.abs(mean(trowelledShades(200, 200, 25, random(3))))).toBeLessThan(0.2);
+        expect(Math.abs(mean(trowelledShades(40, 40, 5, random(3))))).toBeLessThan(0.35);
+    });
+
+    it('darkens its patches towards the accent, else a slightly darker base, also on a dark base', () => {
+        const lightness = (color: string): number => new THREE.Color(color).getHSL({h: 0, s: 0, l: 0}, THREE.SRGBColorSpace).l;
+        const plaster = (color: string, accent: string | null): Material => ({
+            id: 1,
+            code: 'p',
+            name: 'P',
+            pattern: 'Trowelled',
+            color,
+            accent,
+            roughness: 0.85,
+            metalness: 0,
+            tileWidth: 2400,
+            tileHeight: 2400,
+            texture: null,
+        });
+        expect(trowelledAccent(plaster('#9a958b', '#807869'))).toBe('#807869');
+        for (const color of ['#4a4744', '#9a958b', '#e4e0d8']) {
+            const accent = trowelledAccent(plaster(color, null));
+            expect(lightness(accent)).toBeLessThan(lightness(color));
+            expect(lightness(color) - lightness(accent)).toBeLessThan(0.15);
+        }
+    });
+});
 
 describe('herringbone', () => {
     it('rounds the tile length to a whole multiple of the width', () => {
@@ -77,5 +145,13 @@ describe('MaterialLibrary', () => {
         expect(stone.repeat.y).toBeCloseTo(1000 / 1040, 9);
         expect(library.upright(2)).toBe(library.get(2));
         expect(library.upright(3)).toBe(library.get(3));
+    });
+
+    it('draws a trowelled plaster as one patch of its size, or 2.4 m square without one, on the surface UVs', () => {
+        const plaster = new MaterialLibrary([{...dto(4, 'Trowelled', 1500, 1200), accent: '#807869'}, dto(5, 'Trowelled', null, null)], 1);
+        expect(map(plaster.get(4)).repeat.x).toBeCloseTo(1000 / 1500, 9);
+        expect(map(plaster.get(4)).repeat.y).toBeCloseTo(1000 / 1200, 9);
+        expect(map(plaster.get(5)).repeat.x).toBeCloseTo(1000 / 2400, 9);
+        expect(plaster.upright(4)).toBe(plaster.get(4));
     });
 });

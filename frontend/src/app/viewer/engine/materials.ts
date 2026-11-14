@@ -178,7 +178,8 @@ export class MaterialLibrary {
     }
 
     private texture(dto: MaterialDto, lay: Lay): THREE.Texture {
-        const key = `${dto.id}:${lay}`;
+        // A trowelled plaster reads no grain: one (costly) patch serves every lay.
+        const key = dto.pattern === 'Trowelled' ? `${dto.id}` : `${dto.id}:${lay}`;
         let texture = this.textures.get(key);
         if (texture !== undefined) {
             return texture;
@@ -297,6 +298,18 @@ interface ImageLayout {
 
 /** Layout of planks or tiles of a known size; planks need the photo, tiles can be drawn without it. */
 function tileLayout(dto: MaterialDto): ImageLayout | null {
+    if (dto.pattern === 'Trowelled') {
+        // One patch of the given size (a plaster has no pieces), without one `TrowelledPatch` square.
+        const width = dto.tileWidth ?? TrowelledPatch;
+        const height = dto.tileHeight ?? TrowelledPatch;
+        const mmPerPixel = patchResolution(width, height, LayoutMmPerPixel);
+        return {
+            width,
+            height,
+            mmPerPixel,
+            draw: (ctx, _image, rng): void => drawTrowelled(ctx, rng, mmPerPixel, dto.color, trowelledAccent(dto)),
+        };
+    }
     if (dto.tileWidth === null || dto.tileHeight === null) {
         return null;
     }
@@ -788,6 +801,156 @@ function drawFormwork(ctx: CanvasRenderingContext2D, rng: () => number, pieceLen
             ctx.globalAlpha = 1;
         }
     }
+}
+
+/** Size (mm) of a trowelled plaster's patch when the material gives none: large enough not to repeat visibly on a wall. */
+const TrowelledPatch = 2400;
+
+/** How much of its radius a trowel stroke's edge frays in or out at most (`trowelledShades()`). */
+const Fray = 0.5;
+
+/**
+ * The darker colour of a trowelled plaster's patches: its `accent`, else a slightly darker base (not `accentOf()`, whose
+ * shade of a dark base is lighter, and of a light one far too dark for a plaster's patches).
+ */
+export function trowelledAccent(dto: MaterialDto): string {
+    return dto.accent ?? `#${vary(new THREE.Color(dto.color), -0.1).getHexString()}`;
+}
+
+/**
+ * Trowelled plaster (a concrete-look screed, microcement): `trowelledShades()` mapped onto the base colour, towards
+ * `accent` where they are dark and a lighter base where they are light.
+ */
+function drawTrowelled(ctx: CanvasRenderingContext2D, rng: () => number, mmPerPixel: number, color: string, accent: string): void {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+    const shades = trowelledShades(width, height, mmPerPixel, rng);
+    // sRGB channels, as the canvas takes them (`getHex()` converts from the linear working colour space).
+    const rgb = (value: THREE.Color): [number, number, number] => {
+        const hex = value.getHex();
+        return [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255];
+    };
+    const base = new THREE.Color(color);
+    const ground = rgb(base);
+    const dark = rgb(new THREE.Color(accent));
+    const light = rgb(vary(base, 0.12));
+    const image = ctx.createImageData(width, height);
+    for (let i = 0; i < shades.length; i++) {
+        const tone = Math.max(-1, Math.min(1, shades[i]));
+        const to = tone < 0 ? dark : light;
+        const t = Math.abs(tone);
+        image.data[i * 4] = ground[0] + (to[0] - ground[0]) * t;
+        image.data[i * 4 + 1] = ground[1] + (to[1] - ground[1]) * t;
+        image.data[i * 4 + 2] = ground[2] + (to[2] - ground[2]) * t;
+        image.data[i * 4 + 3] = 255;
+    }
+    ctx.putImageData(image, 0, 0);
+}
+
+/**
+ * The shades of a trowelled plaster on a `width` × `height` px patch at `mmPerPixel`, row by row, from −1 (darkest,
+ * the accent) to 1 (lightest): a cloudy ground, layers of trowel strokes with ragged edges and a faint lip where they
+ * end, and sandy patches with grain and pores between the smooth ones. Everything wraps round the edges, so the patch
+ * tiles seamlessly.
+ */
+export function trowelledShades(width: number, height: number, mmPerPixel: number, rng: () => number): Float32Array {
+    const shades = new Float32Array(width * height);
+    const noise = (cellMm: number): Float32Array => periodicNoise(width, height, (width * mmPerPixel) / cellMm, (height * mmPerPixel) / cellMm, rng);
+    for (const [cell, amount] of [[800, 0.22], [300, 0.14], [110, 0.07]]) {
+        const cloud = noise(cell);
+        for (let i = 0; i < shades.length; i++) {
+            shades[i] += amount * cloud[i];
+        }
+    }
+    // How far a stroke's edge frays at each pixel (at most `Fray` of its radius), from coarse and fine noise.
+    const fray = blend(noise(45), 0.38, noise(14), 0.12, 0);
+
+    // Trowel strokes, one layer over another: ellipses 50–250 mm across, their edges frayed. A stroke reaches at most
+    // half the patch each way, so on a small patch it does not wrap onto itself.
+    const strokes = Math.round((width * height * mmPerPixel * mmPerPixel) / 30000);
+    const limit = (1 + Fray) * (1 + Fray);
+    for (let s = 0; s < strokes; s++) {
+        const cx = rng() * width;
+        const cy = rng() * height;
+        const radius = (50 + rng() * 200) / mmPerPixel;
+        const stretch = 1 + rng() * 1.8;
+        const turn = rng() * Math.PI;
+        const tone = (rng() < 0.5 ? -1 : 1) * (0.08 + rng() * 0.22);
+        const [cos, sin] = [Math.cos(turn), Math.sin(turn)];
+        const reachX = Math.min(Math.floor((width - 1) / 2), Math.ceil((1 + Fray) * Math.hypot(radius * stretch * cos, radius * sin)));
+        const reachY = Math.min(Math.floor((height - 1) / 2), Math.ceil((1 + Fray) * Math.hypot(radius * stretch * sin, radius * cos)));
+        for (let dy = -reachY; dy <= reachY; dy++) {
+            const row = ((Math.floor(cy + dy) % height) + height) % height;
+            for (let dx = -reachX; dx <= reachX; dx++) {
+                const u = (dx * cos + dy * sin) / (stretch * radius);
+                const v = (dy * cos - dx * sin) / radius;
+                const distance = u * u + v * v;
+                if (distance >= limit) {
+                    continue;
+                }
+                const i = row * width + ((Math.floor(cx + dx) % width) + width) % width;
+                const q = Math.sqrt(distance) - fray[i];
+                if (q >= 1) {
+                    continue;
+                }
+                // A soft edge about 2 mm wide.
+                const cover = Math.min(1, ((1 - q) * radius * mmPerPixel) / 2);
+                shades[i] += (tone - 0.4 * shades[i]) * cover * 0.7;
+                if (q > 0.93) {
+                    shades[i] += tone > 0 ? -0.05 : 0.05;
+                }
+            }
+        }
+    }
+
+    // Sandy patches: coarser grain, a little darker, with pores about a millimetre or two across, so a pixel of a
+    // coarse patch holds several (the chance capped, so it never fills).
+    const sand = blend(noise(260), 1.54, noise(90), 0.88, 0.11);
+    const pores = mmPerPixel * mmPerPixel;
+    for (let i = 0; i < shades.length; i++) {
+        const sandy = Math.min(1, Math.max(0, sand[i]));
+        shades[i] += (rng() - 0.5) * (0.05 + 0.32 * sandy) - 0.06 * sandy;
+        if (rng() < Math.min(0.15, (0.002 + 0.012 * sandy) * pores)) {
+            shades[i] -= 0.3 + rng() * 0.35;
+        }
+    }
+    return shades;
+}
+
+/** `a · weightA + b · weightB + offset`, written into `a` (so at most one more field is alive meanwhile). */
+function blend(a: Float32Array, weightA: number, b: Float32Array, weightB: number, offset: number): Float32Array {
+    for (let i = 0; i < a.length; i++) {
+        a[i] = weightA * a[i] + weightB * b[i] + offset;
+    }
+    return a;
+}
+
+/**
+ * Value noise from −1 to 1 on a `width` × `height` px patch with about `cellsX` × `cellsY` cells (whole numbers of
+ * them, so it wraps round the edges), smoothly interpolated.
+ */
+function periodicNoise(width: number, height: number, cellsX: number, cellsY: number, rng: () => number): Float32Array {
+    const nx = Math.max(1, Math.round(cellsX));
+    const ny = Math.max(1, Math.round(cellsY));
+    const lattice = Float32Array.from({length: nx * ny}, () => rng() * 2 - 1);
+    const smooth = (t: number): number => t * t * (3 - 2 * t);
+    const result = new Float32Array(width * height);
+    for (let y = 0; y < height; y++) {
+        const fy = (y / height) * ny;
+        const y0 = Math.floor(fy);
+        const ty = smooth(fy - y0);
+        const y1 = (y0 + 1) % ny;
+        for (let x = 0; x < width; x++) {
+            const fx = (x / width) * nx;
+            const x0 = Math.floor(fx);
+            const tx = smooth(fx - x0);
+            const x1 = (x0 + 1) % nx;
+            const top = lattice[y0 * nx + x0] + (lattice[y0 * nx + x1] - lattice[y0 * nx + x0]) * tx;
+            const bottom = lattice[y1 * nx + x0] + (lattice[y1 * nx + x1] - lattice[y1 * nx + x0]) * tx;
+            result[y * width + x] = top + (bottom - top) * ty;
+        }
+    }
+    return result;
 }
 
 /** A pattern's second colour: the material's `accent`, else a shade well apart from its base (darker on a light one). */

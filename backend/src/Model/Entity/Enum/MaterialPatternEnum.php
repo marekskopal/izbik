@@ -35,4 +35,10 @@ enum MaterialPatternEnum: string
 	case Encaustic = 'Encaustic';
 	/** A panel of rounded flutes `tileWidth` apart running up it, whatever its grain; `tileHeight` is not read; not laid in pieces. */
 	case Fluted = 'Fluted';
+	/**
+	 * Trowelled plaster (a concrete-look screed, microcement) without joints: a cloudy ground, trowel strokes with
+	 * ragged edges and sandy patches with pores, the darker ones in the material's `accent`; drawn as one patch
+	 * `tileWidth` × `tileHeight` (2.4 m square without them); not laid in pieces.
+	 */
+	case Trowelled = 'Trowelled';
 }

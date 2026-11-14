@@ -25,6 +25,7 @@ final class CostingTest extends TestCase
 		yield 'zellige 100 × 100' => [MaterialPatternEnum::Zellige, 100, 100, 1320];
 		yield 'encaustic 200 × 200' => [MaterialPatternEnum::Encaustic, 200, 200, 330];
 		yield 'fluted panel' => [MaterialPatternEnum::Fluted, 30, 30, null];
+		yield 'trowelled plaster' => [MaterialPatternEnum::Trowelled, 2400, 2400, null];
 	}
 
 	#[DataProvider('patterns')]

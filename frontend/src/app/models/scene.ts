@@ -29,7 +29,9 @@ export type MaterialPattern =
     /** Cement tiles `tileWidth` × `tileHeight` with a motif in `accent`, forming rosettes where four meet. */
     | 'Encaustic'
     /** Rounded flutes `tileWidth` apart running up the surface (along v), whatever its grain. */
-    | 'Fluted';
+    | 'Fluted'
+    /** Trowelled plaster (concrete-look screed, microcement) without joints, darker patches in `accent`; a patch `tileWidth` × `tileHeight`. */
+    | 'Trowelled';
 export type RoomType = 'Living' | 'Bedroom' | 'Bathroom' | 'Toilet' | 'Hallway' | 'Terrace' | 'Garden' | 'Path' | 'Driveway' | 'Garage' | 'Kitchen';
 
 /** Open-air room types (`RoomTypeEnum::isOutdoor()`): totalled apart from the indoor area. */
