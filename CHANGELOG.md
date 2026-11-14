@@ -6,11 +6,27 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-14
+
+### Added
+
+- Trowelled plaster: a concrete-look screed or microcement without joints, drawn as one seamless patch with trowel
+  strokes and sandy patches, seeded in grey, light grey and anthracite. It is counted by area in the quantities.
+
 ### Changed
 
 - The backend logs through Tracy: errors and exceptions still go to the container log, and also to `log/` on the host
   (`error.log`, `warning.log`, … and an HTML page with the stack trace per exception). PHP warnings and notices are
   turned into exceptions.
+- The database is MariaDB 12.3 (LTS), up from 11.8.
+- Dependency updates: Node.js 26 (LTS) and pnpm 12.19 in the frontend image, Angular 22.2.6, jsdom 31.
+
+### Upgrading
+
+- The `db` service moves to MariaDB 12.3 and upgrades the data of 11.8 on its first start (`MARIADB_AUTO_UPGRADE`).
+  There is no way back to 11.8 with the same data, so run `make backup` before upgrading. Should the backend stay
+  unhealthy after the database restarted, restart it: `docker compose restart backend`.
+- Developing on the host needs Node.js 26.
 
 ## [0.5.0] - 2026-11-10
 
@@ -121,7 +137,8 @@ The first public beta, for running on a server of your own.
 - `make env` gives a new `.env` random database and MinIO passwords.
 - `BACKEND_CORS_ALLOWED_ORIGIN` defaults to empty (no cross-origin calls). Clear `*` in an existing `.env`.
 
-[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/marekskopal/izbik/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/marekskopal/izbik/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/marekskopal/izbik/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/marekskopal/izbik/compare/v0.2.0...v0.3.0
