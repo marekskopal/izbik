@@ -256,7 +256,7 @@ the building sections).
 | --- | --- |
 | Frontend | Angular 22 (standalone components, signals, zoneless), three.js, SCSS, Vitest |
 | Backend | PHP 8.5 on FrankenPHP (worker mode), `marekskopal/orm`, `marekskopal/router`, `mcp/sdk` |
-| Data | MariaDB 11.8, MinIO / S3 for files, Mercure (built into FrankenPHP) for live updates, RabbitMQ for background jobs |
+| Data | MariaDB 12.3, MinIO / S3 for files, Mercure (built into FrankenPHP) for live updates, RabbitMQ for background jobs |
 | Infrastructure | Docker Compose, nginx reverse proxy (optional TLS) |
 
 ## Self-hosting
