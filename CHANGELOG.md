@@ -6,6 +6,18 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-19
+
+### Changed
+
+- Dependency updates: FrankenPHP 1.13.6 with PHP 8.5.13, nginx 1.31.9, RabbitMQ 4.4.1, pnpm 12.21 in the frontend
+  image, PHPStan 2.3.7, PHPUnit 13.4.8, angular-eslint 22.8, typescript-eslint 8.73, Vitest 5.1.1, Mailpit 1.34 for
+  development.
+
+### Security
+
+- The frontend's build tooling uses minimatch 11.0.9, which fixes a denial of service through glob pattern amplification.
+
 ## [0.6.0] - 2026-11-14
 
 ### Added
@@ -137,7 +149,8 @@ The first public beta, for running on a server of your own.
 - `make env` gives a new `.env` random database and MinIO passwords.
 - `BACKEND_CORS_ALLOWED_ORIGIN` defaults to empty (no cross-origin calls). Clear `*` in an existing `.env`.
 
-[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/marekskopal/izbik/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/marekskopal/izbik/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/marekskopal/izbik/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/marekskopal/izbik/compare/v0.3.0...v0.4.0
