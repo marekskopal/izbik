@@ -135,7 +135,7 @@ services:
     # Message broker for the background jobs (account mail), consumed inside the backend container. Not reachable from
     # outside the stack.
     rabbitmq:
-        image: rabbitmq:4.4.0-alpine
+        image: rabbitmq:4.4.1-alpine
         restart: unless-stopped
         environment:
             RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-izbik}
@@ -170,7 +170,7 @@ services:
     # Catches outgoing mail for local testing (SMTP_HOST=mailpit, SMTP_PORT=1025); started only with the `mail` profile
     # (COMPOSE_PROFILES=mail). Its inbox is on http://localhost:<MAILPIT_PORT>.
     mailpit:
-        image: axllent/mailpit:v1.33
+        image: axllent/mailpit:v1.34
         restart: unless-stopped
         environment:
             MP_SMTP_AUTH_ACCEPT_ANY: 1
