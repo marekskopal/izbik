@@ -1,6 +1,6 @@
 FROM composer:2.11.2 AS composer
 FROM mlocati/php-extension-installer:2.13.2 AS php-extension-installer
-FROM dunglas/frankenphp:1.13.6-php8.5.13-alpine AS php
+FROM dunglas/frankenphp:1.14.0-php8.6.0-alpine AS php
 
 COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
@@ -9,6 +9,7 @@ RUN install-php-extensions \
     pdo_mysql \
     sockets \
     zip \
+    mbstring \
     opcache
 
 # poppler-utils: pdfinfo and pdftoppm turn PDF pages into images (PdfRasterizer); DejaVu for PDFs without embedded fonts.

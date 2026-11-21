@@ -75,7 +75,7 @@ flat plus a parametric kitchen, not a general CAD tool.
 ### Architecture (same layout as ukolio)
 
 - `proxy/`: nginx, `/api/*` → backend, `/` → frontend.
-- `backend/`: FrankenPHP + PHP 8.5, `marekskopal/orm` + `marekskopal/router`, MariaDB.
+- `backend/`: FrankenPHP + PHP 8.6, `marekskopal/orm` + `marekskopal/router`, MariaDB.
   Stores the scene and serves uploaded assets (glTF, textures).
 - `frontend/`: Angular 22 (standalone + signals), **plain three.js** wrapped in an Angular
   component and services. `angular-three` exists, but it trails Angular releases

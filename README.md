@@ -255,7 +255,7 @@ the building sections).
 | Layer | Technology |
 | --- | --- |
 | Frontend | Angular 22 (standalone components, signals, zoneless), three.js, SCSS, Vitest |
-| Backend | PHP 8.5 on FrankenPHP (worker mode), `marekskopal/orm`, `marekskopal/router`, `mcp/sdk` |
+| Backend | PHP 8.6 on FrankenPHP (worker mode), `marekskopal/orm`, `marekskopal/router`, `mcp/sdk` |
 | Data | MariaDB 12.3, MinIO / S3 for files, Mercure (built into FrankenPHP) for live updates, RabbitMQ for background jobs |
 | Infrastructure | Docker Compose, nginx reverse proxy (optional TLS) |
 
@@ -372,7 +372,7 @@ Upgrades go forward from any earlier release; to go back, restore the backup mad
 
 ## Development
 
-To develop the frontend or run lint and tests on the host, you also need PHP 8.5 with Composer, Node.js 26 and pnpm.
+To develop the frontend or run lint and tests on the host, you also need PHP 8.6 with Composer, Node.js 26 and pnpm.
 [CONTRIBUTING.md](CONTRIBUTING.md) describes how to contribute; [SECURITY.md](SECURITY.md) how to report a
 vulnerability. Problems and ideas go to the [issues](https://github.com/marekskopal/izbik/issues) (the app's header
 links there as *Report a problem*).

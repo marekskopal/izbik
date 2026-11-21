@@ -4,8 +4,9 @@
     "description": "Izbik – 3D viewer of a flat",
     "license": "MIT",
     "require": {
-        "php": ">=8.5",
+        "php": ">=8.6",
         "ext-json": "*",
+        "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
         "async-aws/s3": "^3.3",
@@ -63,7 +64,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.5"
+            "php": "8.6"
         },
         "sort-packages": true,
         "allow-plugins": {

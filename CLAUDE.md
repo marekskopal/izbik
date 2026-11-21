@@ -23,7 +23,7 @@ Users own projects, and admins see all of them. The architecture mirrors `../uko
   style, font, frame or connection from another origin needs adding to that CSP.**
 - `minio/` (a compose service only): S3-compatible storage for uploaded files.
 - `rabbitmq` (a compose service only): the broker of the background jobs (`izbik_queue` volume).
-- `backend/`: FrankenPHP worker, PHP 8.5, `marekskopal/orm`, `marekskopal/router`, MariaDB. Namespace `Izbik\`.
+- `backend/`: FrankenPHP worker, PHP 8.6, `marekskopal/orm`, `marekskopal/router`, MariaDB. Namespace `Izbik\`.
   - Routes are in `Izbik\Route\Routes`. The entrypoint runs `migration:run` before serving.
   - Every route needs a Bearer access token, except `AuthorizationMiddleware::OpenRoutes` and the guest share read (`ShareRoutePattern`).
   - Logging (as in ukolio): `LoggerInterface` is Tracy (`Service/Logger`: `Logger::initLogger()` enables it in
