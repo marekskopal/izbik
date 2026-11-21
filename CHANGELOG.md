@@ -6,6 +6,18 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-21
+
+### Changed
+
+- The backend runs on PHP 8.6 (FrankenPHP 1.14.0), up from 8.5. Its image now installs the `mbstring` extension, which
+  the PHP 8.6 images no longer include.
+
+### Upgrading
+
+- Nothing to change in `.env`: `make deploy` starts the new images. To lint or test the backend on the host, you need
+  PHP 8.6 with the `mbstring` extension.
+
 ## [0.6.1] - 2026-11-19
 
 ### Changed
@@ -149,7 +161,8 @@ The first public beta, for running on a server of your own.
 - `make env` gives a new `.env` random database and MinIO passwords.
 - `BACKEND_CORS_ALLOWED_ORIGIN` defaults to empty (no cross-origin calls). Clear `*` in an existing `.env`.
 
-[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/marekskopal/izbik/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/marekskopal/izbik/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/marekskopal/izbik/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/marekskopal/izbik/compare/v0.4.0...v0.5.0
