@@ -22,6 +22,11 @@ export interface User {
     locale: Locale;
 }
 
+/** A user in the admins' list, with how many projects they own. */
+export interface AdminUser extends User {
+    projectCount: number;
+}
+
 /** What a user changes on their own account (`PATCH /api/current-user`). */
 export interface CurrentUserUpdate {
     name?: string;

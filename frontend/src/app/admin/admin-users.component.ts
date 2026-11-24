@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {passwordValidator} from '@app/core/validators/password.validator';
-import {User, UserRole} from '@app/models/user';
+import {AdminUser, User, UserRole} from '@app/models/user';
 import {AdminUserService} from '@app/services/admin-user.service';
 import {AlertService} from '@app/services/alert.service';
 import {CurrentUserService} from '@app/services/current-user.service';
@@ -25,7 +25,7 @@ export class AdminUsersComponent implements OnInit {
     private readonly language = inject(LanguageService);
 
     protected readonly roles: UserRole[] = ['User', 'Admin'];
-    protected readonly users = signal<User[]>([]);
+    protected readonly users = signal<AdminUser[]>([]);
     protected readonly loading = signal(true);
     protected readonly adding = signal(false);
     protected readonly saving = signal(false);
@@ -57,7 +57,7 @@ export class AdminUsersComponent implements OnInit {
         this.saving.set(true);
         try {
             const user = await this.adminUsers.create({...this.addForm.getRawValue(), locale: this.language.current()});
-            this.users.update((all) => [...all, user]);
+            this.users.update((all) => [...all, {...user, projectCount: 0}]);
             this.alerts.success(this.translate.instant('admin.added', {name: user.name}));
             this.cancelAdd();
         } catch {
@@ -117,6 +117,6 @@ export class AdminUsersComponent implements OnInit {
     }
 
     private replace(updated: User): void {
-        this.users.update((all) => all.map((u) => (u.id === updated.id ? updated : u)));
+        this.users.update((all) => all.map((u) => (u.id === updated.id ? {...updated, projectCount: u.projectCount} : u)));
     }
 }

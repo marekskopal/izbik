@@ -277,6 +277,7 @@
         },
         "lastSignIn": "Last sign-in",
         "joined": "Joined",
+        "projects": "Projects",
         "actions": "Actions",
         "you": "you",
         "roleOf": "Role of {{name}}",

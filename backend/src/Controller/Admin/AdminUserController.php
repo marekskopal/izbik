@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Izbik\Controller\Admin;
 
 use Izbik\Dto\AdminUserCreateDto;
+use Izbik\Dto\AdminUserDto;
 use Izbik\Dto\AdminUserUpdateDto;
 use Izbik\Dto\UserDto;
 use Izbik\Model\Entity\User;
+use Izbik\Model\Repository\ProjectRepository;
 use Izbik\Response\ErrorResponse;
 use Izbik\Response\ForbiddenResponse;
 use Izbik\Response\NotFoundResponse;
@@ -32,6 +34,7 @@ final readonly class AdminUserController
 
 	public function __construct(
 		private AdminUserService $adminUserService,
+		private ProjectRepository $projectRepository,
 		private UserProvider $userProvider,
 		private RequestService $requestService,
 	) {
@@ -44,8 +47,10 @@ final readonly class AdminUserController
 			return new ForbiddenResponse(self::AdminRequired);
 		}
 
+		$projectCounts = $this->projectRepository->countPerOwner();
+
 		return new JsonResponse(array_map(
-			fn (User $user): UserDto => UserDto::fromEntity($user),
+			fn (User $user): AdminUserDto => new AdminUserDto(UserDto::fromEntity($user), $projectCounts[$user->id] ?? 0),
 			$this->adminUserService->listUsers(),
 		));
 	}

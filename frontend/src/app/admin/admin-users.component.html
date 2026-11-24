@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page page--wide">
     <div class="page__header">
         <h1 class="page__title">{{ 'admin.title' | translate }}</h1>
         @if (!adding()) {
@@ -46,6 +46,7 @@
                     <th>{{ 'common.name' | translate }}</th>
                     <th>{{ 'common.email' | translate }}</th>
                     <th>{{ 'admin.role' | translate }}</th>
+                    <th class="table__number">{{ 'admin.projects' | translate }}</th>
                     <th>{{ 'admin.lastSignIn' | translate }}</th>
                     <th>{{ 'admin.joined' | translate }}</th>
                     <th><span class="visually-hidden">{{ 'admin.actions' | translate }}</span></th>
@@ -69,6 +70,7 @@
                                 }
                             </select>
                         </td>
+                        <td class="table__muted table__number">{{ user.projectCount }}</td>
                         <td class="table__muted">{{ user.lastLoginAt ? (user.lastLoginAt | dateText: 'dateTime') : ('admin.never' | translate) }}</td>
                         <td class="table__muted">{{ user.createdAt | dateText }}</td>
                         <td class="table__actions">
@@ -82,7 +84,7 @@
                     </tr>
                     @if (passwordFor() === user.id) {
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
                                 <form class="password-row" [formGroup]="passwordForm" (ngSubmit)="setPassword(user)">
                                     <label class="field password-row__field">
                                         <span class="field__label">{{ 'admin.newPasswordFor' | translate: {name: user.name} }}</span>
@@ -97,7 +99,7 @@
                     }
                 } @empty {
                     <tr>
-                        <td colspan="6" class="table__empty">{{ (loading() ? 'common.loading' : 'admin.none') | translate }}</td>
+                        <td colspan="7" class="table__empty">{{ (loading() ? 'common.loading' : 'admin.none') | translate }}</td>
                     </tr>
                 }
             </tbody>

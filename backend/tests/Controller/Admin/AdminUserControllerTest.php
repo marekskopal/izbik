@@ -31,11 +31,14 @@ final class AdminUserControllerTest extends IntegrationTestCase
 	public function testAdminListsUsers(): void
 	{
 		$admin = Fixture::createAdmin();
-		Fixture::createUser('jane@example.com');
+		$jane = Fixture::createUser('jane@example.com');
+		Fixture::createProject($jane, 'One');
+		Fixture::createProject($jane, 'Two');
 
 		$users = $this->jsonList($this->request('GET', Routes::AdminUsers->value, authenticatedAs: $admin));
 
 		self::assertSame([$admin->email, 'jane@example.com'], array_column($users, 'email'));
+		self::assertSame([0, 2], array_column($users, 'projectCount'));
 	}
 
 	public function testAdminUpdatesUser(): void
