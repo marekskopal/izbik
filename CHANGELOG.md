@@ -6,6 +6,24 @@ versions follow [semantic versioning](https://semver.org). Upgrading is describe
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-24
+
+### Added
+
+- The admin users list shows how many projects each user owns, and the page is wider so the table fits without
+  scrolling.
+
+### Changed
+
+- Every user sees only their own projects, admins included. An admin no longer lists, opens or edits other users'
+  projects (they answer 404 as for anyone else), no longer receives their live updates and no longer reads other
+  users' furniture and model libraries. Admins still manage the users and the global catalogue.
+
+### Upgrading
+
+- Nothing to change in `.env`: `make deploy` starts the new images. An admin who worked on other users' projects can no
+  longer reach them; their owners can export them (Download) if they need to hand them over.
+
 ## [0.7.0] - 2026-11-21
 
 ### Changed
@@ -161,7 +179,8 @@ The first public beta, for running on a server of your own.
 - `make env` gives a new `.env` random database and MinIO passwords.
 - `BACKEND_CORS_ALLOWED_ORIGIN` defaults to empty (no cross-origin calls). Clear `*` in an existing `.env`.
 
-[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/marekskopal/izbik/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/marekskopal/izbik/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/marekskopal/izbik/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/marekskopal/izbik/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/marekskopal/izbik/compare/v0.5.0...v0.6.0
