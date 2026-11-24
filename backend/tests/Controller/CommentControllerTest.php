@@ -123,17 +123,14 @@ final class CommentControllerTest extends EditorTestCase
 		);
 	}
 
-	public function testOnlyTheAuthorEditsAndAdminsMayDelete(): void
+	public function testAdminsCannotReachOthersComments(): void
 	{
 		$admin = Fixture::createUser(name: 'Admin', role: UserRoleEnum::Admin);
-		$comment = $this->jsonBody($this->comment(['x' => 0, 'y' => 0, 'z' => 0, 'body' => 'Mine']));
-		$id = self::id($comment);
+		$id = self::id($this->jsonBody($this->comment(['x' => 0, 'y' => 0, 'z' => 0, 'body' => 'Mine'])));
 
-		$asAdmin = $this->jsonList($this->request('GET', $this->commentsPath(), authenticatedAs: $admin))[0];
-		self::assertSame([false, true], [$asAdmin['canEdit'], $asAdmin['canDelete']]);
-		self::assertSame(403, $this->request('PUT', $this->commentPath($id), ['body' => 'Theirs'], $admin)->getStatusCode());
-		self::assertTrue($this->jsonBody($this->request('PUT', $this->commentPath($id), ['resolved' => true], $admin))['resolved']);
-		self::assertSame(200, $this->request('DELETE', $this->commentPath($id), authenticatedAs: $admin)->getStatusCode());
+		self::assertSame(404, $this->request('GET', $this->commentsPath(), authenticatedAs: $admin)->getStatusCode());
+		self::assertSame(404, $this->request('PUT', $this->commentPath($id), ['body' => 'Theirs'], $admin)->getStatusCode());
+		self::assertSame(404, $this->request('DELETE', $this->commentPath($id), authenticatedAs: $admin)->getStatusCode());
 	}
 
 	public function testShareLinkGuestsReadAndWriteAsTheLinkAllows(): void

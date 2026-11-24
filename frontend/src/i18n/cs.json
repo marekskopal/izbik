@@ -177,7 +177,6 @@
             "few": "{{count}} podlaží",
             "other": "{{count}} podlaží"
         },
-        "noOwner": "Bez vlastníka",
         "empty": "Zatím žádné projekty.",
         "emptyExamples": "Zatím žádné projekty. Začněte z ukázky výše, nebo si nakreslete vlastní.",
         "createFirst": "Vytvořit první projekt"

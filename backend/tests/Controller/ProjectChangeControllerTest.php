@@ -6,7 +6,6 @@ namespace Izbik\Tests\Controller;
 
 use Izbik\Controller\ProjectChangeController;
 use Izbik\Model\Entity\Enum\ElementTypeEnum;
-use Izbik\Model\Entity\Enum\UserRoleEnum;
 use Izbik\Service\Actor\ActorContext;
 use Izbik\Service\Editor\SceneEditor;
 use Izbik\Service\Editor\UndoService;
@@ -67,13 +66,13 @@ final class ProjectChangeControllerTest extends EditorTestCase
 
 	public function testUndoOnlyTouchesOwnChanges(): void
 	{
-		$admin = Fixture::createUser(role: UserRoleEnum::Admin, name: 'Admin');
 		$this->create('items', ['name' => 'Mine']);
-		$this->create('items', ['name' => 'Admins'], $admin);
+		Fixture::service(ActorContext::class)->setAgent('client-1', 'Claude');
+		Fixture::service(SceneEditor::class)->create($this->user, $this->floor, ElementTypeEnum::Item, ['name' => 'Agents']);
 
 		self::assertSame(200, $this->undo()->getStatusCode());
 
-		self::assertSame(['Admins'], array_column($this->sceneList('items'), 'name'));
+		self::assertSame(['Agents'], array_column($this->sceneList('items'), 'name'));
 	}
 
 	public function testAgentChangesAreSeparateFromTheUsersOwn(): void
@@ -96,17 +95,17 @@ final class ProjectChangeControllerTest extends EditorTestCase
 
 	public function testUndoRefusesWhenSomeoneElseChangedTheElementAndSkipsIt(): void
 	{
-		$admin = Fixture::createUser(role: UserRoleEnum::Admin);
 		$first = $this->create('items', ['name' => 'First', 'x' => 0]);
 		$second = $this->create('items', ['name' => 'Second', 'x' => 0]);
 		$this->edit('PATCH', 'items', self::id($second), ['x' => 100]);
-		$this->edit('PATCH', 'items', self::id($second), ['x' => 999], $admin);
+		Fixture::service(ActorContext::class)->setAgent('client-1', 'Claude');
+		Fixture::service(SceneEditor::class)->update($this->user, $this->floor, ElementTypeEnum::Item, self::id($second), ['x' => 999]);
 
 		$conflict = $this->undo();
 		self::assertSame(409, $conflict->getStatusCode());
 		self::assertStringContainsString('changed by someone else', (string) $conflict->getBody());
 
-		// The blocked change is skipped; the next undo removes the second item... which the admin changed too.
+		// The blocked change is skipped; the next undo removes the second item... which the agent changed too.
 		self::assertSame(409, $this->undo()->getStatusCode());
 		self::assertSame(200, $this->undo()->getStatusCode());
 		self::assertSame(['Second'], array_column($this->sceneList('items'), 'name'));

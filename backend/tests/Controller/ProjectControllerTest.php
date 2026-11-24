@@ -49,7 +49,7 @@ final class ProjectControllerTest extends IntegrationTestCase
 		self::assertSame(422, $response->getStatusCode());
 	}
 
-	public function testUsersSeeOnlyTheirProjectsAdminsSeeAll(): void
+	public function testUsersAndAdminsSeeOnlyTheirOwnProjects(): void
 	{
 		$jane = Fixture::createUser();
 		$joe = Fixture::createUser();
@@ -61,9 +61,9 @@ final class ProjectControllerTest extends IntegrationTestCase
 		$forAdmin = $this->jsonList($this->request('GET', Routes::Projects->value, authenticatedAs: $admin));
 
 		self::assertSame(['Jane'], array_column($forJane, 'name'));
-		self::assertEqualsCanonicalizing(['Jane', 'Joe'], array_column($forAdmin, 'name'));
+		self::assertSame([], $forAdmin);
 		self::assertSame(404, $this->request('GET', self::path($janes->id), authenticatedAs: $joe)->getStatusCode());
-		self::assertSame(200, $this->request('GET', self::path($janes->id), authenticatedAs: $admin)->getStatusCode());
+		self::assertSame(404, $this->request('GET', self::path($janes->id), authenticatedAs: $admin)->getStatusCode());
 	}
 
 	public function testUpdateReplacesDetails(): void

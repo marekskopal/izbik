@@ -22,7 +22,7 @@ use MarekSkopal\Router\Attribute\RoutePut;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/** Projects of the signed-in user (all projects for admins). Others' projects answer 404. */
+/** Projects of the signed-in user. Others' projects answer 404, for admins too. */
 final readonly class ProjectController
 {
 	public const string NotFound = 'Project not found.';

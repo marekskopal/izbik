@@ -3,13 +3,12 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {Example, Project} from '@app/models/project';
 import {AlertService} from '@app/services/alert.service';
-import {CurrentUserService} from '@app/services/current-user.service';
 import {ProjectService} from '@app/services/project.service';
 import {DateTextPipe} from '@app/shared/i18n/date-text.pipe';
 import {PluralPipe} from '@app/shared/i18n/plural.pipe';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 
-/** The user's projects (all projects for admins), creating a new one, starting from an example and importing a project file. */
+/** The user's projects creating a new one, starting from an example and importing a project file. */
 @Component({
     selector: 'fd-projects',
     imports: [DateTextPipe, PluralPipe, ReactiveFormsModule, RouterLink, TranslatePipe],
@@ -19,7 +18,6 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 })
 export class ProjectsComponent implements OnInit {
     private readonly translate = inject(TranslateService);
-    protected readonly currentUser = inject(CurrentUserService);
     private readonly projectService = inject(ProjectService);
     private readonly router = inject(Router);
     private readonly alerts = inject(AlertService);

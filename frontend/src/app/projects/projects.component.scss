@@ -82,15 +82,6 @@
     color: $color-text-subtle;
 }
 
-.project__owner {
-    align-self: flex-start;
-    padding: 1px 8px;
-    border-radius: 999px;
-    background: $color-surface-muted;
-    font-size: 11px;
-    color: $color-text-muted;
-}
-
 .empty {
     grid-column: 1 / -1;
     text-align: center;

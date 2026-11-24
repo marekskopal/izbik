@@ -30,10 +30,6 @@ final readonly class MercureCookieIssuer
 	/** @return list<string> */
 	public function topics(User $user): array
 	{
-		if ($user->isAdmin()) {
-			return ['*'];
-		}
-
 		return array_map(
 			fn (Project $project): string => ProjectUpdatePublisher::topic($project->id),
 			$this->projectProvider->listAccessible($user),

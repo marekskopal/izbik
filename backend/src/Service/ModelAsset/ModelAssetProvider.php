@@ -20,7 +20,7 @@ use Throwable;
 
 /**
  * 3D models (glTF binaries) and who may use them, with the same rules as furniture definitions: global ones everyone
- * reads and admins write, a user's library its owner and admins, a project's models whoever may access the project.
+ * reads and admins write, a user's library its owner, a project's models whoever may access the project.
  * Items of a project may use global models, the project owner's library and the project's own. The file is stored once
  * and never changes; deleting is soft, so items keep drawing it.
  */

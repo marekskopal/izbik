@@ -191,7 +191,7 @@ it has made the change.
 - **AI agents (MCP)**: a built-in MCP server lets agents such as Claude read and edit projects, with the same
   validation and history as the UI.
 - **Accounts**: sign-up with email verification, optional Sign in with Google, password reset by email, JWT
-  authentication, `Admin` and `User` roles. Users own their projects; admins see all projects and manage users.
+  authentication, `Admin` and `User` roles. Users see only their own projects; admins also manage users.
 - **English and Czech**: the whole app, its mail, the API's messages, the drawings (with the decimal comma) and the
   seeded furniture and materials; each account picks its language, guests get the browser's.
 

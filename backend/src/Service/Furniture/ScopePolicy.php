@@ -11,7 +11,7 @@ use Izbik\Service\Project\ProjectProvider;
 
 /**
  * Who may read, change and use a scoped asset: global ones are for everyone (admins change them), a library is its
- * owner's (and admins'), a project's own go with access to the project. The same rules for furniture definitions and
+ * owner's, a project's own go with access to the project. The same rules for furniture definitions and
  * 3D models.
  */
 final readonly class ScopePolicy
@@ -36,10 +36,10 @@ final readonly class ScopePolicy
 		return $owner !== null && self::canReadLibraryOf($user, $owner) ? [$owner->id] : [];
 	}
 
-	/** Its owner and admins — which, as project access is owner-or-admin too, covers whoever works on the owner's projects. */
+	/** Its owner only — who, as project access is owner-only too, is whoever works on the owner's projects. */
 	public static function canReadLibraryOf(User $user, User $owner): bool
 	{
-		return $user->isAdmin() || $owner->id === $user->id;
+		return $owner->id === $user->id;
 	}
 
 	public function canRead(User $user, ScopedAsset $asset): bool

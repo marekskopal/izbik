@@ -74,7 +74,7 @@ final class ProjectTransferControllerTest extends IntegrationTestCase
 			$this->request('GET', self::exportPath($project->id), authenticatedAs: Fixture::createUser())->getStatusCode(),
 		);
 		self::assertSame(
-			200,
+			404,
 			$this->request('GET', self::exportPath($project->id), authenticatedAs: Fixture::createAdmin())->getStatusCode(),
 		);
 	}

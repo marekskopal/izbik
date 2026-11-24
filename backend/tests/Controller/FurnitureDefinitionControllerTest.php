@@ -53,7 +53,7 @@ final class FurnitureDefinitionControllerTest extends IntegrationTestCase
 		$path = self::definitionPath(self::id($definition));
 		self::assertSame(200, $this->request('GET', $path, authenticatedAs: $user)->getStatusCode());
 		self::assertSame(404, $this->request('GET', $path, authenticatedAs: Fixture::createUser())->getStatusCode());
-		self::assertSame(200, $this->request('GET', $path, authenticatedAs: Fixture::createAdmin())->getStatusCode());
+		self::assertSame(404, $this->request('GET', $path, authenticatedAs: Fixture::createAdmin())->getStatusCode());
 	}
 
 	public function testOnlyAdminsManageGlobalDefinitions(): void
@@ -88,7 +88,7 @@ final class FurnitureDefinitionControllerTest extends IntegrationTestCase
 
 		$path = self::definitionPath(self::id($created));
 		self::assertSame(404, $this->request('GET', $path, authenticatedAs: $stranger)->getStatusCode());
-		self::assertSame(200, $this->request('GET', $path, authenticatedAs: Fixture::createAdmin())->getStatusCode());
+		self::assertSame(404, $this->request('GET', $path, authenticatedAs: Fixture::createAdmin())->getStatusCode());
 	}
 
 	public function testListShowsGlobalOwnAndProjectDefinitions(): void
@@ -106,9 +106,7 @@ final class FurnitureDefinitionControllerTest extends IntegrationTestCase
 
 		self::assertSame(['Global', 'Owner library'], $this->listNames($owner));
 		self::assertSame(['Global', 'Owner library', 'Project'], $this->listNames($owner, $project->id));
-		// With a project: what its items may use — an admin working on it sees the owner's library, not their own.
 		self::assertSame(['Admin library', 'Global'], $this->listNames($admin));
-		self::assertSame(['Global', 'Owner library', 'Project'], $this->listNames($admin, $project->id));
 		self::assertSame(['Global', 'Other library'], $this->listNames($other));
 		self::assertSame(
 			404,

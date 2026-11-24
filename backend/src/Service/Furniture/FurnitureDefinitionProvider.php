@@ -17,7 +17,7 @@ use Izbik\Service\Project\ProjectProvider;
 use Izbik\Service\Realtime\ProjectUpdatePublisher;
 
 /**
- * Furniture definitions and who may use them. Reading: global ones everyone; a user's library its owner and admins; a
+ * Furniture definitions and who may use them. Reading: global ones everyone; a user's library its owner; a
  * project's definitions whoever may access the project. Writing: global ones admins only, otherwise as reading.
  * Deleting is soft (items using a definition keep rendering).
  */

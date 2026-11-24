@@ -77,9 +77,6 @@
                     }
                     · {{ project.updatedAt | dateText }}
                 </span>
-                @if (currentUser.isAdmin() && project.ownerId !== currentUser.currentUser()?.id) {
-                    <span class="project__owner">{{ project.ownerName ?? ('projects.noOwner' | translate) }}</span>
-                }
             </a>
         } @empty {
             @if (!loading() && !creating()) {

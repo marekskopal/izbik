@@ -21,7 +21,7 @@ use Izbik\Service\Project\Exception\ProjectException;
 use Izbik\Service\Realtime\ProjectUpdatePublisher;
 use MarekSkopal\ORM\ORM;
 
-/** Projects and who may see them: the owner, and admins (all projects). */
+/** Projects and who may see them: the owner only (admins included). */
 final readonly class ProjectProvider
 {
 	private const int MaxNameLength = 255;
@@ -42,17 +42,17 @@ final readonly class ProjectProvider
 	public function findAccessible(User $user, int $projectId): ?Project
 	{
 		$project = $this->projectRepository->findById($projectId);
-		if ($project === null || !$user->isAdmin() && $project->owner?->id !== $user->id) {
+		if ($project === null || $project->owner?->id !== $user->id) {
 			return null;
 		}
 
 		return $project;
 	}
 
-	/** @return list<Project> Most recently changed first; admins get every project. */
+	/** @return list<Project> The user's own, most recently changed first. */
 	public function listAccessible(User $user): array
 	{
-		return $user->isAdmin() ? $this->projectRepository->findAllOrdered() : $this->projectRepository->findByOwner($user->id);
+		return $this->projectRepository->findByOwner($user->id);
 	}
 
 	/**

@@ -177,7 +177,6 @@
             "few": "{{count}} floors",
             "other": "{{count}} floors"
         },
-        "noOwner": "No owner",
         "empty": "No projects yet.",
         "emptyExamples": "No projects yet. Start from an example above, or draw your own.",
         "createFirst": "Create your first project"

@@ -3,7 +3,7 @@
 A 3D designer for flats and houses. A project has 1..N floors with rooms, walls, openings and items. Custom-made
 furniture is stored as parametric furniture definitions. The app includes a viewer, an editor, a walkthrough, versions,
 share links, a cut list and an MCP server for AI agents. Accounts have the roles Admin or User and authenticate with JWT.
-Users own projects, and admins see all of them. The architecture mirrors `../ukolio` (same author), and parts of it
+Users own projects and see only their own (admins too). The architecture mirrors `../ukolio` (same author), and parts of it
 (OAuth, lint configs) were ported from there. See `README.md` for the user-facing overview.
 
 ## Services
@@ -250,7 +250,7 @@ Users own projects, and admins see all of them. The architecture mirrors `../uko
   builder and the sheets). New room type `Garage` (`isAncillary()` / `isAncillaryRoom()`): indoor, summed apart from
   the living area in the room schedules (`ancillary` totals), a new one on `concrete-floor`.
 - Hierarchy: `Project` → `Floor` → rooms / walls / items. Access goes through `ProjectProvider::findAccessible()`, which
-  allows the owner or an admin and answers 404 otherwise.
+  allows the owner only (admins too) and answers 404 otherwise.
 - Foreign keys cascade on delete (project → floors → content), so deletes go through the parent row.
 - Versions: the floors are the working copy. `ProjectVersion::$snapshot` is JSON from `ProjectSnapshotService`, which
   documents the format. **A new floor, room, wall or item field must be added to the snapshot restore too.**

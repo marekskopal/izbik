@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Izbik\Tests\Controller;
 
 use Izbik\Controller\GroupController;
+use Izbik\Model\Entity\Enum\ElementTypeEnum;
 use Izbik\Route\Routes;
+use Izbik\Service\Actor\ActorContext;
 use Izbik\Service\Editor\BatchWriter;
 use Izbik\Service\Editor\ChangeBatch;
 use Izbik\Service\Editor\Element\GroupHandler;
@@ -80,7 +82,9 @@ final class GroupControllerTest extends EditorTestCase
 		$groupId = self::id($this->createGroup('Pair', [$a, $b])['element']);
 		$this->groupAction($groupId, 'move', ['dx' => 500]);
 
-		self::assertSame(200, $this->edit('PATCH', 'items', $b, ['z' => 100], as: Fixture::createAdmin())->getStatusCode());
+		// Someone else: an agent working on the same project.
+		Fixture::service(ActorContext::class)->setAgent('client-1', 'Claude');
+		Fixture::service(SceneEditor::class)->update($this->user, $this->floor, ElementTypeEnum::Item, $b, ['z' => 100]);
 
 		$response = $this->undo();
 		self::assertSame(409, $response->getStatusCode());

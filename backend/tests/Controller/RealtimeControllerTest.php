@@ -42,7 +42,7 @@ final class RealtimeControllerTest extends EditorTestCase
 		self::assertSame($expected, self::grantedTopics($cookie));
 
 		$admin = $this->request('POST', Routes::RealtimeSubscription->value, [], Fixture::createUser(role: UserRoleEnum::Admin));
-		self::assertSame(['*'], self::grantedTopics($admin->getHeaderLine('Set-Cookie')));
+		self::assertSame([], self::grantedTopics($admin->getHeaderLine('Set-Cookie')));
 	}
 
 	public function testEditPublishesOneUpdateWithTheCommittedRevision(): void
